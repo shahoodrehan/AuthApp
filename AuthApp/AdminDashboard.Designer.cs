@@ -45,7 +45,7 @@
             current_status_txt = new TextBox();
             current_status_lbl = new Label();
             changestatus_btn = new Button();
-            password_lbl = new Label();
+            changestatus_lbl = new Label();
             validatebtn = new Button();
             label8 = new Label();
             label7 = new Label();
@@ -194,7 +194,7 @@
             panel3.Controls.Add(current_status_txt);
             panel3.Controls.Add(current_status_lbl);
             panel3.Controls.Add(changestatus_btn);
-            panel3.Controls.Add(password_lbl);
+            panel3.Controls.Add(changestatus_lbl);
             panel3.Controls.Add(validatebtn);
             panel3.Controls.Add(label8);
             panel3.Controls.Add(label7);
@@ -240,15 +240,15 @@
             changestatus_btn.Text = "Ok";
             changestatus_btn.UseVisualStyleBackColor = true;
             // 
-            // password_lbl
+            // changestatus_lbl
             // 
-            password_lbl.AutoSize = true;
-            password_lbl.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            password_lbl.Location = new Point(128, 491);
-            password_lbl.Name = "password_lbl";
-            password_lbl.Size = new Size(136, 28);
-            password_lbl.TabIndex = 6;
-            password_lbl.Text = "Change Status";
+            changestatus_lbl.AutoSize = true;
+            changestatus_lbl.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            changestatus_lbl.Location = new Point(128, 491);
+            changestatus_lbl.Name = "changestatus_lbl";
+            changestatus_lbl.Size = new Size(136, 28);
+            changestatus_lbl.TabIndex = 6;
+            changestatus_lbl.Text = "Change Status";
             // 
             // validatebtn
             // 
@@ -403,7 +403,7 @@
         private Label label8;
         private Label label7;
         private Button validatebtn;
-        private Label password_lbl;
+        private Label changestatus_lbl;
         private Button changestatus_btn;
         private ComboBox statuscombobox;
         private TextBox current_status_txt;
