@@ -1,14 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
-using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using Microsoft.VisualBasic.ApplicationServices;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace AuthApp
 {
@@ -30,9 +23,10 @@ namespace AuthApp
             usercombobox.Text = "Select your role";
 
             List<string> users = new List<string>();
-            users.Insert(2, "Engineer");
+
             users.Insert(0, "Manager");
             users.Insert(1, "Operator");
+            users.Insert(2, "Engineer");
 
             changecombobox.DataSource = users;
             changecombobox.SelectedIndex = 0;
@@ -42,14 +36,14 @@ namespace AuthApp
             status.Insert(1, "Deactive");
             status.Insert(2, "Select Status");
 
-            statuscombobox.DataSource= status;
+            statuscombobox.DataSource = status;
             statuscombobox.SelectedIndex = 2;
 
             current_status_txt.Visible = false;
-            current_status_lbl.Visible=false;
-            password_lbl.Visible=false;
-            password_txt.Visible=false;
-            changestatus_btn.Visible=false;
+            current_status_lbl.Visible = false;
+            changeStatus_lbl.Visible = false;
+            changestatus_btn.Visible = false;
+            statuscombobox.Visible = false;
 
 
         }
@@ -92,6 +86,7 @@ namespace AuthApp
                         MessageBox.Show("Error adding user.");
                     }
                 }
+                con.Close();
             }
         }
 
@@ -107,11 +102,99 @@ namespace AuthApp
 
         private void validatebtn_Click(object sender, EventArgs e)
         {
-            current_status_txt.Visible = true;
-            current_status_lbl.Visible = true;
-            password_lbl.Visible = true;
-            password_txt.Visible = true;
-            changestatus_btn.Visible = true;
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    con.Open();
+                    string query = "SELECT User_id, username, active_status FROM Users WHERE username = @username AND roles = @roles;";
+
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@username", user_validationtxt.Text);
+                        cmd.Parameters.AddWithValue("@roles", changecombobox.SelectedValue);
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                reader.Read();
+                                int activeStatus = Convert.ToInt32(reader["active_status"]);
+                                if (activeStatus == 0)
+                                {
+                                    current_status_txt.Text = "Deactive";
+                                }
+                                else if (activeStatus == 1)
+                                {
+                                    current_status_txt.Text = "Active";
+                                }
+                                current_status_txt.Visible = true;
+
+                                statuscombobox.Visible = true;
+                                current_status_lbl.Visible = true;
+                                changeStatus_lbl.Visible = true;
+                                password_txt.Visible = true;
+                                changestatus_btn.Visible = true;
+
+                            }
+                            else
+                            {
+                                MessageBox.Show("Invalid Username");
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error: {ex.Message}");
+                }
+                finally
+                {
+                    con.Close();
+                }
+            }
+        }
+
+        private void changestatus_btn_Click(object sender, EventArgs e)
+        {
+
+            string query = "UPDATE Users SET active_status = @newActiveStatus WHERE username = @username AND roles = @roles;";
+            int active, deactive;
+            
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    if (statuscombobox.SelectedValue == "Active")
+                    {
+                        active = 1;
+                        cmd.Parameters.AddWithValue("@newActiveStatus", active);
+                    }
+                    else
+                    {
+                        deactive = 0;
+                        cmd.Parameters.AddWithValue("@newActiveStatus", deactive);
+                    }
+          
+                    cmd.Parameters.AddWithValue("@username", user_validationtxt.Text);
+                    cmd.Parameters.AddWithValue("@roles", changecombobox.SelectedValue);
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("Status updated successfully!");
+                    }
+                    else
+                    {
+                        MessageBox.Show("");
+                    }
+                }
+                con.Close();
+            }
+
 
         }
     }

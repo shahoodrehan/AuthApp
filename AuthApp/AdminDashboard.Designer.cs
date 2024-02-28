@@ -45,7 +45,7 @@
             current_status_txt = new TextBox();
             current_status_lbl = new Label();
             changestatus_btn = new Button();
-            password_lbl = new Label();
+            changeStatus_lbl = new Label();
             validatebtn = new Button();
             label8 = new Label();
             label7 = new Label();
@@ -194,7 +194,7 @@
             panel3.Controls.Add(current_status_txt);
             panel3.Controls.Add(current_status_lbl);
             panel3.Controls.Add(changestatus_btn);
-            panel3.Controls.Add(password_lbl);
+            panel3.Controls.Add(changeStatus_lbl);
             panel3.Controls.Add(validatebtn);
             panel3.Controls.Add(label8);
             panel3.Controls.Add(label7);
@@ -216,7 +216,7 @@
             // 
             // current_status_txt
             // 
-            current_status_txt.Location = new Point(285, 457);
+            current_status_txt.Location = new Point(285, 453);
             current_status_txt.Name = "current_status_txt";
             current_status_txt.Size = new Size(217, 27);
             current_status_txt.TabIndex = 10;
@@ -225,7 +225,7 @@
             // 
             current_status_lbl.AutoSize = true;
             current_status_lbl.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            current_status_lbl.Location = new Point(129, 453);
+            current_status_lbl.Location = new Point(128, 453);
             current_status_lbl.Name = "current_status_lbl";
             current_status_lbl.Size = new Size(135, 28);
             current_status_lbl.TabIndex = 9;
@@ -239,16 +239,17 @@
             changestatus_btn.TabIndex = 8;
             changestatus_btn.Text = "Ok";
             changestatus_btn.UseVisualStyleBackColor = true;
+            changestatus_btn.Click += changestatus_btn_Click;
             // 
-            // password_lbl
+            // changeStatus_lbl
             // 
-            password_lbl.AutoSize = true;
-            password_lbl.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            password_lbl.Location = new Point(128, 491);
-            password_lbl.Name = "password_lbl";
-            password_lbl.Size = new Size(136, 28);
-            password_lbl.TabIndex = 6;
-            password_lbl.Text = "Change Status";
+            changeStatus_lbl.AutoSize = true;
+            changeStatus_lbl.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            changeStatus_lbl.Location = new Point(128, 491);
+            changeStatus_lbl.Name = "changeStatus_lbl";
+            changeStatus_lbl.Size = new Size(136, 28);
+            changeStatus_lbl.TabIndex = 6;
+            changeStatus_lbl.Text = "Change Status";
             // 
             // validatebtn
             // 
@@ -274,7 +275,7 @@
             // 
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 12F);
-            label7.Location = new Point(157, 190);
+            label7.Location = new Point(137, 190);
             label7.Name = "label7";
             label7.Size = new Size(107, 28);
             label7.TabIndex = 3;
@@ -403,7 +404,7 @@
         private Label label8;
         private Label label7;
         private Button validatebtn;
-        private Label password_lbl;
+        private Label changeStatus_lbl;
         private Button changestatus_btn;
         private ComboBox statuscombobox;
         private TextBox current_status_txt;
