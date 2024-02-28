@@ -140,7 +140,7 @@ namespace AuthApp
                         }
                         else
                         {
-                        
+                            // Invalid username or password for Engineer role
                             failedLoginAttempts++;
 
                             if (failedLoginAttempts >= 3)
