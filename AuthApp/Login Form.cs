@@ -6,6 +6,8 @@ namespace AuthApp
 {
     public partial class Form1 : Form
     {
+        private int failedLoginAttempts = 0;
+        private int totalLoginAttempts = 3;
         string connectionString = "Data Source=shahood-rehan;Initial Catalog=AuthenticationApp;Integrated Security=True;Trust Server Certificate=True";
         public Form1()
         {
@@ -47,7 +49,7 @@ namespace AuthApp
             {
                 username = usernametxt.Text;
                 password = passwordtxt.Text;
-               
+
 
             }
             else if (selectedRole == "Engineer")
@@ -90,7 +92,7 @@ namespace AuthApp
                                     MessageBox.Show("Invalid password");
                                 }
                             }
-                            else if(usernametxt.Text!= user_name) 
+                            else if (usernametxt.Text != user_name)
                             {
                                 MessageBox.Show("Invalid Username");
                             }
@@ -117,34 +119,41 @@ namespace AuthApp
                     {
                         if (reader.HasRows)
                         {
-                            try
-                            {
-                                if (usernametxt.Text == user_name)
-                                {
-                                    if (passwordtxt.Text == pass_word)
-                                    {
-                                        MessageBox.Show("Login successful for Engineer!");
-                                    }
-                                    else
-                                    {
 
-                                        MessageBox.Show("Invalid password");
-                                    }
+                            if (usernametxt.Text == user_name)
+                            {
+                                if (passwordtxt.Text == pass_word)
+                                {
+                                    MessageBox.Show("Login successful for Engineer!");
                                 }
                                 else
                                 {
-                                    MessageBox.Show("Invalid username");
+
+                                    MessageBox.Show("Invalid password");
                                 }
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                MessageBox.Show(ex.Message);
+                                MessageBox.Show("Invalid username");
                             }
-                            
+
                         }
                         else
                         {
-                            MessageBox.Show("Invalid username or password");
+                            // Invalid username or password for Engineer role
+                            failedLoginAttempts++;
+
+                            if (failedLoginAttempts >= 3)
+                            {
+
+                                passwordtxt.Enabled = false;
+                                MessageBox.Show("Password disabled. Contact admin to reset your password.");
+                            }
+                            else
+                            {
+                                totalLoginAttempts--;
+                                MessageBox.Show("Invalid username or password. Attempt's left #" + totalLoginAttempts);
+                            }
                         }
                     }
                 }
