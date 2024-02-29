@@ -23,6 +23,7 @@ namespace AuthApp
             rolecombobox.DataSource = roles;
             rolecombobox.SelectedIndex = 0;
             rolecombobox.Text = "Select your role";
+            
 
         }
 
@@ -85,6 +86,11 @@ namespace AuthApp
                                 if (passwordtxt.Text == pass_word)
                                 {
                                     MessageBox.Show("Login successful for Admin!");
+                                    AdminDashboard admin = new AdminDashboard();
+                                    Form1 login = new Form1();
+                                    login.Hide();
+                                    admin.Show();
+                                    
                                 }
                                 else
                                 {
