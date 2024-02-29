@@ -15,7 +15,7 @@ namespace AuthApp
     public partial class AdminDashboard : Form
     {
         string connectionString = "Data Source=shahood-rehan;Initial Catalog=AuthenticationApp;Integrated Security=True;Trust Server Certificate=True";
-
+        DateTime dateTime = DateTime.Now;
         public AdminDashboard()
         {
             InitializeComponent();
@@ -40,16 +40,16 @@ namespace AuthApp
             List<string> status = new List<string>();
             status.Insert(0, "Active");
             status.Insert(1, "Deactive");
-            status.Insert(2, "Select Status");
 
-            statuscombobox.DataSource= status;
-            statuscombobox.SelectedIndex = 2;
+
+            statuscombobox.DataSource = status;
+            statuscombobox.Text = "Select status";
 
             current_status_txt.Visible = false;
-            current_status_lbl.Visible=false;
-            changestatus_lbl.Visible=false;
-         statuscombobox.Visible=false;
-            changestatus_btn.Visible=false;
+            current_status_lbl.Visible = false;
+            changestatus_lbl.Visible = false;
+            statuscombobox.Visible = false;
+            changestatus_btn.Visible = false;
 
 
         }
@@ -70,16 +70,39 @@ namespace AuthApp
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
+                string checkPreviousPasswordsQuery = "SELECT TOP 10 password FROM Users  ORDER BY created_at DESC";
 
-                string query = "INSERT INTO Users (username, password, active_status, roles) VALUES (@username, @password, @activestatus, @roles)";
+                using (SqlCommand checkCmd = new SqlCommand(checkPreviousPasswordsQuery, con))
+                {
+                    using (SqlDataReader reader = checkCmd.ExecuteReader())
+                    {
+                        List<string> previousPasswords = new List<string>();
 
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                        while (reader.Read())
+                        {
+                            previousPasswords.Add(reader["password"].ToString());
+                        }
+
+                        string newPassword = password_txt.Text;
+
+                        if (previousPasswords.Contains(newPassword))
+                        {
+                            MessageBox.Show("Your Password must not be the same as any of the last 10 passwords.");
+                            return;
+                        }
+                    }
+                }
+
+
+                string insertUserQuery = "INSERT INTO Users (username, password, active_status, roles, created_at) VALUES (@username, @password, @activestatus, @roles, @created_at)";
+
+                using (SqlCommand cmd = new SqlCommand(insertUserQuery, con))
                 {
                     cmd.Parameters.AddWithValue("@username", username_txt.Text);
                     cmd.Parameters.AddWithValue("@password", password_txt.Text);
                     cmd.Parameters.AddWithValue("@activestatus", 1);
                     cmd.Parameters.AddWithValue("@roles", usercombobox.SelectedValue);
-
+                    cmd.Parameters.AddWithValue("@created_at", dateTime);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
 
@@ -94,6 +117,7 @@ namespace AuthApp
                 }
             }
         }
+
 
         private void button1_Click_1(object sender, EventArgs e)
         {
@@ -132,7 +156,16 @@ namespace AuthApp
                                 changestatus_lbl.Visible = true;
                                 password_txt.Visible = true;
                                 changestatus_btn.Visible = true;
-                                current_status_txt.Text = activeStatus.ToString();
+
+
+                                if (activeStatus == 1)
+                                {
+                                    current_status_txt.Text = "Active";
+                                }
+                                else if (activeStatus == 0)
+                                {
+                                    current_status_txt.Text = "Inactive";
+                                }
                             }
                             else
                             {
@@ -152,5 +185,69 @@ namespace AuthApp
             }
         }
 
+
+        private void changestatus_btn_Click(object sender, EventArgs e)
+        {
+
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    con.Open();
+                    string query = "UPDATE Users SET active_status = @activestatus WHERE username = @username AND roles = @roles";
+
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        if (statuscombobox.SelectedIndex == 0)
+                        {
+                            int active_status;
+                            active_status = 1;
+                            cmd.Parameters.AddWithValue("@activestatus", active_status);
+                        }
+                        else if (statuscombobox.SelectedIndex == 1)
+                        {
+                            int active_status;
+                            active_status = 0;
+                            cmd.Parameters.AddWithValue("@activestatus", active_status);
+                        }
+
+                        cmd.Parameters.AddWithValue("@username", user_validationtxt.Text);
+                        cmd.Parameters.AddWithValue("@roles", changecombobox.SelectedValue);
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show("Status updated successfully");
+                            user_validationtxt.Clear();
+                            current_status_txt.Visible = false;
+                            current_status_lbl.Visible = false;
+                            changestatus_lbl.Visible = false;
+                            statuscombobox.Visible = false;
+                            changestatus_btn.Visible = false;
+
+                        }
+                        else
+                        {
+                            MessageBox.Show("Update failed. User not found or role mismatch.");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error: {ex.Message}");
+                }
+                finally
+                {
+                    con.Close();
+                }
+            }
+        }
+
+        private void logout_btn_Click(object sender, EventArgs e)
+        {
+            System.Windows.Forms.Application.Exit();
+        }
     }
 }

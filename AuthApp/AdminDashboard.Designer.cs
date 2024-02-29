@@ -239,6 +239,7 @@
             changestatus_btn.TabIndex = 8;
             changestatus_btn.Text = "Ok";
             changestatus_btn.UseVisualStyleBackColor = true;
+            changestatus_btn.Click += changestatus_btn_Click;
             // 
             // changestatus_lbl
             // 
@@ -346,6 +347,7 @@
             logout_btn.TabIndex = 1;
             logout_btn.Text = "Logout";
             logout_btn.UseVisualStyleBackColor = true;
+            logout_btn.Click += logout_btn_Click;
             // 
             // label1
             // 
