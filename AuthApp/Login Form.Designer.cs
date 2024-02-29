@@ -37,12 +37,14 @@
             label3 = new Label();
             label2 = new Label();
             label1 = new Label();
+            exit_btn = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
             panel1.BackColor = SystemColors.ControlLight;
+            panel1.Controls.Add(exit_btn);
             panel1.Controls.Add(label4);
             panel1.Controls.Add(rolecombobox);
             panel1.Controls.Add(loginbtn);
@@ -78,7 +80,7 @@
             // loginbtn
             // 
             loginbtn.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            loginbtn.Location = new Point(428, 503);
+            loginbtn.Location = new Point(333, 506);
             loginbtn.Name = "loginbtn";
             loginbtn.Size = new Size(124, 41);
             loginbtn.TabIndex = 5;
@@ -134,6 +136,17 @@
             label1.TabIndex = 0;
             label1.Text = "Authentication";
             // 
+            // exit_btn
+            // 
+            exit_btn.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            exit_btn.Location = new Point(490, 505);
+            exit_btn.Name = "exit_btn";
+            exit_btn.Size = new Size(118, 48);
+            exit_btn.TabIndex = 8;
+            exit_btn.Text = "Exit";
+            exit_btn.UseVisualStyleBackColor = true;
+            exit_btn.Click += exit_btn_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -158,5 +171,6 @@
         private Button loginbtn;
         private Label label4;
         private ComboBox rolecombobox;
+        private Button exit_btn;
     }
 }

@@ -23,12 +23,14 @@ namespace AuthApp
             rolecombobox.DataSource = roles;
             rolecombobox.SelectedIndex = 0;
             rolecombobox.Text = "Select your role";
-            
+
 
         }
 
         private void loginbtn_Click(object sender, EventArgs e)
         {
+            Form1 login = new Form1();
+            AdminDashboard admin = new AdminDashboard();
             string username, password;
             string selectedRole = rolecombobox.SelectedItem.ToString();
 
@@ -37,19 +39,23 @@ namespace AuthApp
                 username = usernametxt.Text;
                 password = passwordtxt.Text;
                 ValidateAdmin(username, password);
+                login.Dispose();
 
             }
             else if (selectedRole == "Manager")
             {
                 username = usernametxt.Text;
                 password = passwordtxt.Text;
-
+                ValidateManager(username, password);
+                login.Dispose();
 
             }
             else if (selectedRole == "Operator")
             {
                 username = usernametxt.Text;
                 password = passwordtxt.Text;
+                ValidateOperator(username, password);
+                login.Dispose();
 
 
             }
@@ -58,6 +64,7 @@ namespace AuthApp
                 username = usernametxt.Text;
                 password = passwordtxt.Text;
                 ValidateEngineer(username, password);
+                login.Dispose();
             }
             else
             {
@@ -86,11 +93,7 @@ namespace AuthApp
                                 if (passwordtxt.Text == pass_word)
                                 {
                                     MessageBox.Show("Login successful for Admin!");
-                                    AdminDashboard admin = new AdminDashboard();
-                                    Form1 login = new Form1();
-                                    login.Hide();
-                                    admin.Show();
-                                    
+
                                 }
                                 else
                                 {
@@ -105,6 +108,118 @@ namespace AuthApp
 
                         }
 
+                    }
+                }
+                con.Close();
+            }
+        }
+        private void ValidateManager(string user_name, string pass_word)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                string query = "Select username, password from Users where username= @username AND password=@password AND roles='Manager';";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@username", user_name);
+                    cmd.Parameters.AddWithValue("@password", pass_word);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+
+                            if (usernametxt.Text == user_name)
+                            {
+                                if (passwordtxt.Text == pass_word)
+                                {
+                                    MessageBox.Show("Login successful for Manager!");
+                                }
+                                else
+                                {
+
+                                    MessageBox.Show("Invalid password");
+                                }
+                            }
+                            else
+                            {
+                                MessageBox.Show("Invalid username");
+                            }
+
+                        }
+                        else
+                        {
+
+                            failedLoginAttempts++;
+
+                            if (failedLoginAttempts >= 3)
+                            {
+
+                                passwordtxt.Enabled = false;
+                                MessageBox.Show("Password disabled. Contact admin to reset your password.");
+                            }
+                            else
+                            {
+                                totalLoginAttempts--;
+                                MessageBox.Show("Invalid username or password. Attempt's left #" + totalLoginAttempts);
+                            }
+                        }
+                    }
+                }
+                con.Close();
+            }
+        }
+        private void ValidateOperator(string user_name, string pass_word)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                string query = "Select username, password from Users where username= @username AND password=@password AND roles='Operator';";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@username", user_name);
+                    cmd.Parameters.AddWithValue("@password", pass_word);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+
+                            if (usernametxt.Text == user_name)
+                            {
+                                if (passwordtxt.Text == pass_word)
+                                {
+                                    MessageBox.Show("Login successful for Operator!");
+                                }
+                                else
+                                {
+
+                                    MessageBox.Show("Invalid password");
+                                }
+                            }
+                            else
+                            {
+                                MessageBox.Show("Invalid username");
+                            }
+
+                        }
+                        else
+                        {
+
+                            failedLoginAttempts++;
+
+                            if (failedLoginAttempts >= 3)
+                            {
+
+                                passwordtxt.Enabled = false;
+                                MessageBox.Show("Password disabled. Contact admin to reset your password.");
+                            }
+                            else
+                            {
+                                totalLoginAttempts--;
+                                MessageBox.Show("Invalid username or password. Attempt's left #" + totalLoginAttempts);
+                            }
+                        }
                     }
                 }
                 con.Close();
@@ -146,7 +261,7 @@ namespace AuthApp
                         }
                         else
                         {
-                            // Invalid username or password for Engineer role
+
                             failedLoginAttempts++;
 
                             if (failedLoginAttempts >= 3)
@@ -163,7 +278,13 @@ namespace AuthApp
                         }
                     }
                 }
+                con.Close();
             }
+        }
+
+        private void exit_btn_Click(object sender, EventArgs e)
+        {
+            System.Windows.Forms.Application.Exit();
         }
     }
 }
