@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Win32;
+using System.Security.Cryptography;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace AuthApp
 {
@@ -16,6 +18,7 @@ namespace AuthApp
     {
         string connectionString = "Data Source=shahood-rehan;Initial Catalog=AuthenticationApp;Integrated Security=True;Trust Server Certificate=True";
         DateTime dateTime = DateTime.Now;
+        PasswordHashing hashing = new PasswordHashing();
         public AdminDashboard()
         {
             InitializeComponent();
@@ -79,42 +82,29 @@ namespace AuthApp
 
         private void button1_Click(object sender, EventArgs e)
         {
+            string enteredPassword = password_txt.Text;
+            List<string> previousPasswords = GetStoredPasswords();
+            bool isValid = !previousPasswords.Any(previousPassword => ValidatePassword(enteredPassword, previousPassword));
+            if (!isValid)
+            {
+                MessageBox.Show("Your password is the same as a previous password.");
+                return;
+            }
+
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                con.Open(); 
-              
-                    string checkPreviousPasswordsQuery = "SELECT TOP 10 password FROM Users  ORDER BY created_at DESC";
-
-                    using (SqlCommand checkCmd = new SqlCommand(checkPreviousPasswordsQuery, con))
-                    {
-                        using (SqlDataReader reader = checkCmd.ExecuteReader())
-                        {
-                            List<string> previousPasswords = new List<string>();
-
-                            while (reader.Read())
-                            {
-                                previousPasswords.Add(reader["password"].ToString());
-                            }
-
-                            string newPassword = password_txt.Text;
-
-                            if (previousPasswords.Contains(newPassword))
-                            {
-                            MessageBox.Show("Your password is same as previous password");
-                            return;
+                con.Open();
+                PasswordHashing hasher = new PasswordHashing();
+                string password = password_txt.Text;
+                string hashedPassword = hasher.HashPassword(password);
 
 
-                            }
-                        }
-                    }
-                  
-
-                    string insertUserQuery = "INSERT INTO Users (username, password, active_status, roles, created_at) VALUES (@username, @password, @activestatus, @roles, @created_at)";
+                string insertUserQuery = "INSERT INTO Users (username, password, active_status, roles, created_at) VALUES (@username, @password, @activestatus, @roles, @created_at)";
 
                 using (SqlCommand cmd = new SqlCommand(insertUserQuery, con))
                 {
                     cmd.Parameters.AddWithValue("@username", username_txt.Text);
-                    cmd.Parameters.AddWithValue("@password", password_txt.Text);
+                    cmd.Parameters.AddWithValue("@password", hashedPassword);
                     cmd.Parameters.AddWithValue("@activestatus", 1);
                     cmd.Parameters.AddWithValue("@roles", usercombobox.SelectedValue);
                     cmd.Parameters.AddWithValue("@created_at", dateTime);
@@ -131,6 +121,14 @@ namespace AuthApp
                     }
                 }
             }
+            
+        }
+        private bool ValidatePassword(string enteredPassword, string storedHashedPassword)
+        {
+            PasswordHashing hasher = new PasswordHashing();
+            string hashedEnteredPassword = hasher.HashPassword(enteredPassword);
+
+            return string.Equals(hashedEnteredPassword, storedHashedPassword, StringComparison.OrdinalIgnoreCase);
         }
 
 
@@ -143,7 +141,30 @@ namespace AuthApp
         {
 
         }
+        private List<string> GetStoredPasswords()
+        {
+            List<string> previousPasswords = new List<string>();
 
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+
+                string checkPreviousPasswordsQuery = "SELECT TOP 10 password FROM Users ORDER BY created_at DESC";
+
+                using (SqlCommand checkCmd = new SqlCommand(checkPreviousPasswordsQuery, con))
+                {
+                    using (SqlDataReader reader = checkCmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            previousPasswords.Add(reader["password"].ToString());
+                        }
+                    }
+                }
+            }
+
+            return previousPasswords;
+        }
         private void validatebtn_Click(object sender, EventArgs e)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
@@ -295,10 +316,10 @@ namespace AuthApp
                             else
                             {
                                 MessageBox.Show("Current status is active, no need to change the password");
-                                
+
 
                             }
-                            
+
 
                         }
                         else
@@ -310,7 +331,7 @@ namespace AuthApp
             }
 
         }
-        
+
         private void reset_btn_Click(object sender, EventArgs e)
         {
             using (SqlConnection con = new SqlConnection(connectionString))

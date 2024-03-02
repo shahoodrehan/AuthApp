@@ -121,7 +121,7 @@
             // 
             // create_btn
             // 
-            create_btn.Location = new Point(287, 576);
+            create_btn.Location = new Point(326, 515);
             create_btn.Name = "create_btn";
             create_btn.Size = new Size(94, 29);
             create_btn.TabIndex = 7;
@@ -167,7 +167,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(158, 213);
+            label3.Location = new Point(147, 217);
             label3.Name = "label3";
             label3.Size = new Size(112, 28);
             label3.TabIndex = 2;
@@ -176,7 +176,7 @@
             // usercombobox
             // 
             usercombobox.FormattingEnabled = true;
-            usercombobox.Location = new Point(297, 217);
+            usercombobox.Location = new Point(265, 217);
             usercombobox.Name = "usercombobox";
             usercombobox.Size = new Size(201, 28);
             usercombobox.TabIndex = 1;
