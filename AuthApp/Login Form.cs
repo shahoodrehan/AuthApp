@@ -1,5 +1,6 @@
 using Azure.Identity;
 using Microsoft.Data.SqlClient;
+using System.Drawing;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace AuthApp
@@ -156,7 +157,7 @@ namespace AuthApp
                             {
 
                                 passwordtxt.Enabled = false;
-                                MessageBox.Show("Password disabled. Contact admin to reset your password.");
+                                change_status(user_name, "Manager");
                             }
                             else
                             {
@@ -212,7 +213,7 @@ namespace AuthApp
                             {
 
                                 passwordtxt.Enabled = false;
-                                MessageBox.Show("Password disabled. Contact admin to reset your password.");
+                                change_status(user_name, "Operator");
                             }
                             else
                             {
@@ -268,7 +269,7 @@ namespace AuthApp
                             {
 
                                 passwordtxt.Enabled = false;
-                                MessageBox.Show("Password disabled. Contact admin to reset your password.");
+                                change_status(user_name, "Engineer");
                             }
                             else
                             {
@@ -281,7 +282,33 @@ namespace AuthApp
                 con.Close();
             }
         }
+        private void change_status(string username, string roles)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Open();
+                    string query = "UPDATE Users SET active_status = @active_status WHERE username = @username AND roles = @roles";
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@username", username);
+                        cmd.Parameters.AddWithValue("@active_status", 0);
+                        cmd.Parameters.AddWithValue("@roles", roles);
+                        int rowsaffected = cmd.ExecuteNonQuery();
+                        if (rowsaffected > 0)
+                        {
+                            MessageBox.Show("Contact administrator for further instructions!");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+            }
 
+        }
         private void exit_btn_Click(object sender, EventArgs e)
         {
             System.Windows.Forms.Application.Exit();

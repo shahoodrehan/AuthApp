@@ -45,11 +45,23 @@ namespace AuthApp
             statuscombobox.DataSource = status;
             statuscombobox.Text = "Select status";
 
+            List<string> password_role = new List<string>();
+            password_role.Insert(0, "Manager");
+            password_role.Insert(1, "Operator");
+            password_role.Insert(2, "Engineer");
+            reset_pass_cbx.DataSource = password_role;
+
+
             current_status_txt.Visible = false;
             current_status_lbl.Visible = false;
             changestatus_lbl.Visible = false;
             statuscombobox.Visible = false;
             changestatus_btn.Visible = false;
+
+            //reset
+            new_pass_lbl.Visible = false;
+            resetpasstxt.Visible = false;
+            reset_btn.Visible = false;
 
 
         }
@@ -69,32 +81,35 @@ namespace AuthApp
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                con.Open();
-                string checkPreviousPasswordsQuery = "SELECT TOP 10 password FROM Users  ORDER BY created_at DESC";
+                con.Open(); 
+              
+                    string checkPreviousPasswordsQuery = "SELECT TOP 10 password FROM Users  ORDER BY created_at DESC";
 
-                using (SqlCommand checkCmd = new SqlCommand(checkPreviousPasswordsQuery, con))
-                {
-                    using (SqlDataReader reader = checkCmd.ExecuteReader())
+                    using (SqlCommand checkCmd = new SqlCommand(checkPreviousPasswordsQuery, con))
                     {
-                        List<string> previousPasswords = new List<string>();
-
-                        while (reader.Read())
+                        using (SqlDataReader reader = checkCmd.ExecuteReader())
                         {
-                            previousPasswords.Add(reader["password"].ToString());
-                        }
+                            List<string> previousPasswords = new List<string>();
 
-                        string newPassword = password_txt.Text;
+                            while (reader.Read())
+                            {
+                                previousPasswords.Add(reader["password"].ToString());
+                            }
 
-                        if (previousPasswords.Contains(newPassword))
-                        {
-                            MessageBox.Show("Your Password must not be the same as any of the last 10 passwords.");
+                            string newPassword = password_txt.Text;
+
+                            if (previousPasswords.Contains(newPassword))
+                            {
+                            MessageBox.Show("Your password is same as previous password");
                             return;
+
+
+                            }
                         }
                     }
-                }
+                  
 
-
-                string insertUserQuery = "INSERT INTO Users (username, password, active_status, roles, created_at) VALUES (@username, @password, @activestatus, @roles, @created_at)";
+                    string insertUserQuery = "INSERT INTO Users (username, password, active_status, roles, created_at) VALUES (@username, @password, @activestatus, @roles, @created_at)";
 
                 using (SqlCommand cmd = new SqlCommand(insertUserQuery, con))
                 {
@@ -248,6 +263,107 @@ namespace AuthApp
         private void logout_btn_Click(object sender, EventArgs e)
         {
             System.Windows.Forms.Application.Exit();
+        }
+
+        private void Validate_btn_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+
+                con.Open();
+                string query = "SELECT * FROM Users WHERE username = @username AND roles = @roles";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@username", usernametxt.Text);
+                    cmd.Parameters.AddWithValue("@roles", reset_pass_cbx.SelectedValue);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            reader.Read();
+                            int activeStatus = Convert.ToInt32(reader["active_status"]);
+                            if (activeStatus == 0)
+                            {
+                                MessageBox.Show("Current status is deactive");
+                                new_pass_lbl.Visible = true;
+                                resetpasstxt.Visible = true;
+                                reset_btn.Visible = true;
+
+                            }
+                            else
+                            {
+                                MessageBox.Show("Current status is active, no need to change the password");
+                                
+
+                            }
+                            
+
+                        }
+                        else
+                        {
+                            MessageBox.Show("Invalid Username");
+                        }
+                    }
+                }
+            }
+
+        }
+        
+        private void reset_btn_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+
+                string checkPreviousPasswordsQuery = "SELECT TOP 10 password FROM Users  ORDER BY created_at DESC";
+
+                using (SqlCommand checkCmd = new SqlCommand(checkPreviousPasswordsQuery, con))
+                {
+                    using (SqlDataReader reader = checkCmd.ExecuteReader())
+                    {
+                        List<string> previousPasswords = new List<string>();
+
+                        while (reader.Read())
+                        {
+                            previousPasswords.Add(reader["password"].ToString());
+                        }
+
+                        string newPassword = resetpasstxt.Text;
+
+                        if (previousPasswords.Contains(newPassword))
+                        {
+                            MessageBox.Show("Your password is same as previous password");
+                            return;
+
+
+                        }
+                    }
+                }
+
+                string query = "UPDATE USERS set password=@password, active_status=@active_status WHERE username=@username AND roles=@roles";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@password", resetpasstxt.Text);
+                    cmd.Parameters.AddWithValue("@active_status", 1);
+                    cmd.Parameters.AddWithValue("@username", usernametxt.Text);
+                    cmd.Parameters.AddWithValue("@roles", reset_pass_cbx.SelectedValue);
+                    int rowsaffected = cmd.ExecuteNonQuery();
+                    if (rowsaffected > 0)
+                    {
+                        MessageBox.Show("Password reset successful");
+                        MessageBox.Show("Status changed to active");
+                        return;
+                    }
+                }
+            }
+        }
+
+        private void change_pass_btn_Click(object sender, EventArgs e)
+        {
+            tabControl1.SelectedIndex = 2;
         }
     }
 }

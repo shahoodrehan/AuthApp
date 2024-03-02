@@ -52,7 +52,19 @@
             changecombobox = new ComboBox();
             user_validationtxt = new TextBox();
             label6 = new Label();
+            tabPage1 = new TabPage();
+            panel4 = new Panel();
+            reset_btn = new Button();
+            resetpasstxt = new TextBox();
+            Validate_btn = new Button();
+            usernametxt = new TextBox();
+            reset_pass_cbx = new ComboBox();
+            new_pass_lbl = new Label();
+            label11 = new Label();
+            label10 = new Label();
+            label9 = new Label();
             panel2 = new Panel();
+            change_pass_btn = new Button();
             button1 = new Button();
             createuser_btn = new Button();
             logout_btn = new Button();
@@ -62,6 +74,8 @@
             createuser.SuspendLayout();
             tabPage2.SuspendLayout();
             panel3.SuspendLayout();
+            tabPage1.SuspendLayout();
+            panel4.SuspendLayout();
             panel2.SuspendLayout();
             SuspendLayout();
             // 
@@ -80,6 +94,7 @@
             // 
             tabControl1.Controls.Add(createuser);
             tabControl1.Controls.Add(tabPage2);
+            tabControl1.Controls.Add(tabPage1);
             tabControl1.Location = new Point(306, 0);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
@@ -307,9 +322,124 @@
             label6.TabIndex = 0;
             label6.Text = "Change User Status";
             // 
+            // tabPage1
+            // 
+            tabPage1.Controls.Add(panel4);
+            tabPage1.Location = new Point(4, 29);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(698, 691);
+            tabPage1.TabIndex = 2;
+            tabPage1.Text = "tabPage1";
+            tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // panel4
+            // 
+            panel4.BackColor = Color.SlateGray;
+            panel4.Controls.Add(reset_btn);
+            panel4.Controls.Add(resetpasstxt);
+            panel4.Controls.Add(Validate_btn);
+            panel4.Controls.Add(usernametxt);
+            panel4.Controls.Add(reset_pass_cbx);
+            panel4.Controls.Add(new_pass_lbl);
+            panel4.Controls.Add(label11);
+            panel4.Controls.Add(label10);
+            panel4.Controls.Add(label9);
+            panel4.ForeColor = SystemColors.ButtonHighlight;
+            panel4.Location = new Point(-4, -3);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(706, 695);
+            panel4.TabIndex = 0;
+            // 
+            // reset_btn
+            // 
+            reset_btn.ForeColor = SystemColors.ActiveCaptionText;
+            reset_btn.Location = new Point(306, 503);
+            reset_btn.Name = "reset_btn";
+            reset_btn.Size = new Size(94, 29);
+            reset_btn.TabIndex = 7;
+            reset_btn.Text = "Reset";
+            reset_btn.UseVisualStyleBackColor = true;
+            reset_btn.Click += reset_btn_Click;
+            // 
+            // resetpasstxt
+            // 
+            resetpasstxt.Location = new Point(280, 428);
+            resetpasstxt.Name = "resetpasstxt";
+            resetpasstxt.Size = new Size(160, 27);
+            resetpasstxt.TabIndex = 6;
+            // 
+            // Validate_btn
+            // 
+            Validate_btn.ForeColor = SystemColors.ActiveCaptionText;
+            Validate_btn.Location = new Point(306, 348);
+            Validate_btn.Name = "Validate_btn";
+            Validate_btn.Size = new Size(94, 29);
+            Validate_btn.TabIndex = 5;
+            Validate_btn.Text = "Validate";
+            Validate_btn.UseVisualStyleBackColor = true;
+            Validate_btn.Click += Validate_btn_Click;
+            // 
+            // usernametxt
+            // 
+            usernametxt.Location = new Point(286, 276);
+            usernametxt.Name = "usernametxt";
+            usernametxt.Size = new Size(172, 27);
+            usernametxt.TabIndex = 4;
+            // 
+            // reset_pass_cbx
+            // 
+            reset_pass_cbx.FormattingEnabled = true;
+            reset_pass_cbx.Location = new Point(280, 187);
+            reset_pass_cbx.Name = "reset_pass_cbx";
+            reset_pass_cbx.Size = new Size(178, 28);
+            reset_pass_cbx.TabIndex = 1;
+            // 
+            // new_pass_lbl
+            // 
+            new_pass_lbl.AutoSize = true;
+            new_pass_lbl.ForeColor = SystemColors.ActiveCaptionText;
+            new_pass_lbl.Location = new Point(154, 428);
+            new_pass_lbl.Name = "new_pass_lbl";
+            new_pass_lbl.Size = new Size(106, 20);
+            new_pass_lbl.TabIndex = 3;
+            new_pass_lbl.Text = "New password";
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.ForeColor = SystemColors.ActiveCaptionText;
+            label11.Location = new Point(154, 276);
+            label11.Name = "label11";
+            label11.Size = new Size(113, 20);
+            label11.TabIndex = 2;
+            label11.Text = "Enter Username";
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.ForeColor = SystemColors.ActiveCaptionText;
+            label10.Location = new Point(161, 191);
+            label10.Name = "label10";
+            label10.Size = new Size(79, 20);
+            label10.TabIndex = 1;
+            label10.Text = "Select role";
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label9.ForeColor = SystemColors.ActiveCaptionText;
+            label9.Location = new Point(251, 91);
+            label9.Name = "label9";
+            label9.Size = new Size(207, 38);
+            label9.TabIndex = 0;
+            label9.Text = "Reset Password";
+            // 
             // panel2
             // 
             panel2.BackColor = SystemColors.ActiveCaption;
+            panel2.Controls.Add(change_pass_btn);
             panel2.Controls.Add(button1);
             panel2.Controls.Add(createuser_btn);
             panel2.Controls.Add(logout_btn);
@@ -318,6 +448,16 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(308, 724);
             panel2.TabIndex = 0;
+            // 
+            // change_pass_btn
+            // 
+            change_pass_btn.Location = new Point(64, 289);
+            change_pass_btn.Name = "change_pass_btn";
+            change_pass_btn.Size = new Size(118, 55);
+            change_pass_btn.TabIndex = 4;
+            change_pass_btn.Text = "Change password";
+            change_pass_btn.UseVisualStyleBackColor = true;
+            change_pass_btn.Click += change_pass_btn_Click;
             // 
             // button1
             // 
@@ -374,6 +514,9 @@
             tabPage2.ResumeLayout(false);
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
+            tabPage1.ResumeLayout(false);
+            panel4.ResumeLayout(false);
+            panel4.PerformLayout();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ResumeLayout(false);
@@ -410,5 +553,17 @@
         private ComboBox statuscombobox;
         private TextBox current_status_txt;
         private Label current_status_lbl;
+        private Button change_pass_btn;
+        private TabPage tabPage1;
+        private Panel panel4;
+        private Label label9;
+        private ComboBox reset_pass_cbx;
+        private Label new_pass_lbl;
+        private Label label11;
+        private Label label10;
+        private TextBox usernametxt;
+        private Button Validate_btn;
+        private TextBox resetpasstxt;
+        private Button reset_btn;
     }
 }
