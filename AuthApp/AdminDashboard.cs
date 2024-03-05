@@ -82,6 +82,12 @@ namespace AuthApp
 
         private void button1_Click(object sender, EventArgs e)
         {
+            int passlength = password_txt.TextLength;
+            if(passlength<8)
+            {
+                MessageBox.Show("Your password must be 8 digits long");
+                return;
+            }
             string enteredPassword = password_txt.Text;
             List<string> previousPasswords = GetStoredPasswords();
             bool isValid = !previousPasswords.Any(previousPassword => ValidatePassword(enteredPassword, previousPassword));
@@ -334,34 +340,21 @@ namespace AuthApp
 
         private void reset_btn_Click(object sender, EventArgs e)
         {
+            string enteredPassword = resetpasstxt.Text;
+            List<string> previousPasswords = GetStoredPasswords();
+            bool isValid = !previousPasswords.Any(previousPassword => ValidatePassword(enteredPassword, previousPassword));
+            if (!isValid)
+            {
+                MessageBox.Show("Your password is the same as a previous password.");
+                return;
+            }
+
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
-
-                string checkPreviousPasswordsQuery = "SELECT TOP 10 password FROM Users  ORDER BY created_at DESC";
-
-                using (SqlCommand checkCmd = new SqlCommand(checkPreviousPasswordsQuery, con))
-                {
-                    using (SqlDataReader reader = checkCmd.ExecuteReader())
-                    {
-                        List<string> previousPasswords = new List<string>();
-
-                        while (reader.Read())
-                        {
-                            previousPasswords.Add(reader["password"].ToString());
-                        }
-
-                        string newPassword = resetpasstxt.Text;
-
-                        if (previousPasswords.Contains(newPassword))
-                        {
-                            MessageBox.Show("Your password is same as previous password");
-                            return;
-
-
-                        }
-                    }
-                }
+                PasswordHashing hasher = new PasswordHashing();
+                string password = resetpasstxt.Text;
+                string hashedPassword = hasher.HashPassword(password);
 
                 string query = "UPDATE USERS set password=@password, active_status=@active_status WHERE username=@username AND roles=@roles";
 
@@ -386,5 +379,5 @@ namespace AuthApp
         {
             tabControl1.SelectedIndex = 2;
         }
-    }
+    }   
 }

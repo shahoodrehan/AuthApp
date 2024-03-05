@@ -1,12 +1,13 @@
-using Azure.Identity;
 using Microsoft.Data.SqlClient;
-using System.Drawing;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace AuthApp
 {
     public partial class Form1 : Form
     {
+        string hashedPasswordFromDB;
+        AdminDashboard admin = new AdminDashboard();
         private int failedLoginAttempts = 0;
         private int totalLoginAttempts = 3;
         string connectionString = "Data Source=shahood-rehan;Initial Catalog=AuthenticationApp;Integrated Security=True;Trust Server Certificate=True";
@@ -94,6 +95,9 @@ namespace AuthApp
                                 if (passwordtxt.Text == pass_word)
                                 {
                                     MessageBox.Show("Login successful for Admin!");
+                                    usernametxt.Clear();
+                                    passwordtxt.Clear();
+                                    admin.Show();
 
                                 }
                                 else
@@ -135,6 +139,8 @@ namespace AuthApp
                                 if (passwordtxt.Text == pass_word)
                                 {
                                     MessageBox.Show("Login successful for Manager!");
+                                    usernametxt.Clear();
+                                    passwordtxt.Clear();
                                 }
                                 else
                                 {
@@ -191,6 +197,8 @@ namespace AuthApp
                                 if (passwordtxt.Text == pass_word)
                                 {
                                     MessageBox.Show("Login successful for Operator!");
+                                    usernametxt.Clear();
+                                    passwordtxt.Clear();
                                 }
                                 else
                                 {
@@ -228,91 +236,127 @@ namespace AuthApp
         }
         private void ValidateEngineer(string user_name, string pass_word)
         {
+            bool passwordValidationResult = false;
+
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
-                string query = "Select username, password from Users where username= @username AND password=@password AND roles='Engineer';";
+                string query = "Select password from Users where username= @username AND roles='Engineer';";
+
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@username", user_name);
-                    cmd.Parameters.AddWithValue("@password", pass_word);
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.HasRows)
                         {
+                            reader.Read();
+                            hashedPasswordFromDB = reader["password"].ToString();
 
-                            if (usernametxt.Text == user_name)
+                            passwordValidationResult = ValidatePassword(pass_word, hashedPasswordFromDB);
+
+                            if (!passwordValidationResult)
                             {
-                                if (passwordtxt.Text == pass_word)
+                                failedLoginAttempts++;
+
+                                if (failedLoginAttempts >= 3)
                                 {
-                                    MessageBox.Show("Login successful for Engineer!");
+                                    passwordtxt.Enabled = false;
+                                    change_status(user_name, "Engineer");
                                 }
                                 else
                                 {
-
-                                    MessageBox.Show("Invalid password");
+                                    totalLoginAttempts--;
+                                    MessageBox.Show("Invalid password. Attempts left #" + totalLoginAttempts);
                                 }
                             }
-                            else
-                            {
-                                MessageBox.Show("Invalid username");
-                            }
-
                         }
                         else
                         {
-
-                            failedLoginAttempts++;
-
-                            if (failedLoginAttempts >= 3)
-                            {
-
-                                passwordtxt.Enabled = false;
-                                change_status(user_name, "Engineer");
-                            }
-                            else
-                            {
-                                totalLoginAttempts--;
-                                MessageBox.Show("Invalid username or password. Attempt's left #" + totalLoginAttempts);
-                            }
+                            MessageBox.Show("Invalid username");
                         }
                     }
                 }
                 con.Close();
             }
-        }
-        private void change_status(string username, string roles)
-        {
-            try
+
+            if (passwordValidationResult)
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
-                    string query = "UPDATE Users SET active_status = @active_status WHERE username = @username AND roles = @roles";
+                    string query = "Select username from Users where username= @username AND roles='Engineer';";
+
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
-                        cmd.Parameters.AddWithValue("@username", username);
-                        cmd.Parameters.AddWithValue("@active_status", 0);
-                        cmd.Parameters.AddWithValue("@roles", roles);
-                        int rowsaffected = cmd.ExecuteNonQuery();
-                        if (rowsaffected > 0)
+                        cmd.Parameters.AddWithValue("@username", user_name);
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            MessageBox.Show("Contact administrator for further instructions!");
+                            reader.Read();
+
+                            if (reader.HasRows)
+                            {
+                                if (usernametxt.Text == user_name)
+                                {
+                                    MessageBox.Show("Login successful for Engineer!");
+                                    usernametxt.Clear();
+                                    passwordtxt.Clear();
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Invalid username");
+                                }
+                            }
                         }
                     }
+                    con.Close();
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}");
-            }
+        }
 
-        }
-        private void exit_btn_Click(object sender, EventArgs e)
+
+        private void change_status(string username, string roles)
+{
+    try
+    {
+        using (SqlConnection con = new SqlConnection(connectionString))
         {
-            System.Windows.Forms.Application.Exit();
+            con.Open();
+            string query = "UPDATE Users SET active_status = @active_status WHERE username = @username AND roles = @roles";
+            using (SqlCommand cmd = new SqlCommand(query, con))
+            {
+                cmd.Parameters.AddWithValue("@username", username);
+                cmd.Parameters.AddWithValue("@active_status", 0);
+                cmd.Parameters.AddWithValue("@roles", roles);
+                int rowsaffected = cmd.ExecuteNonQuery();
+                if (rowsaffected > 0)
+                {
+                    MessageBox.Show("Your id has been locked");
+                    MessageBox.Show("Contact administrator for further instructions!");
+                }
+            }
         }
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show($"Error: {ex.Message}");
+    }
+
+}
+private void exit_btn_Click(object sender, EventArgs e)
+{
+    System.Windows.Forms.Application.Exit();
+}
+private bool ValidatePassword(string inputPassword, string hashedPassword)
+{
+    using (SHA256 sha256 = SHA256.Create())
+    {
+        byte[] hashedInputBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(inputPassword));
+        return BitConverter.ToString(hashedInputBytes).Replace("-", "").Equals(hashedPassword);
+    }
+}
     }
 }
 
