@@ -11,8 +11,6 @@ namespace AuthApp
 {
     internal class PasswordHashing
     {
-        HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA256;
-
         public string HashPassword(string password)
         {
             using (SHA256 sha256 = SHA256.Create())

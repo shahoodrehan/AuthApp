@@ -48,6 +48,7 @@ namespace AuthApp
             {
                 username = usernametxt.Text;
                 password = passwordtxt.Text;
+                CheckPasswordExpiry(username);
                 ValidateManager(username, password);
                 login.Dispose();
 
@@ -56,6 +57,7 @@ namespace AuthApp
             {
                 username = usernametxt.Text;
                 password = passwordtxt.Text;
+                CheckPasswordExpiry(username);
                 ValidateOperator(username, password);
                 login.Dispose();
 
@@ -65,6 +67,7 @@ namespace AuthApp
             {
                 username = usernametxt.Text;
                 password = passwordtxt.Text;
+                CheckPasswordExpiry(username);
                 ValidateEngineer(username, password);
                 login.Dispose();
             }
@@ -75,47 +78,68 @@ namespace AuthApp
         }
         private void ValidateAdmin(string user_name, string pass_word)
         {
+            bool passwordValidationResult = false;
+
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
-
-                string query = "SELECT username, password FROM Users WHERE username = @username AND password = @password AND roles = 'Admin';";
+                string query = "Select password from Users where username= @username AND roles='Admin';";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@username", user_name);
-                    cmd.Parameters.AddWithValue("@password", pass_word);
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.HasRows)
                         {
-                            if (usernametxt.Text == user_name)
-                            {
-                                if (passwordtxt.Text == pass_word)
-                                {
-                                    MessageBox.Show("Login successful for Admin!");
-                                    usernametxt.Clear();
-                                    passwordtxt.Clear();
-                                    admin.Show();
+                            reader.Read();
+                            hashedPasswordFromDB = reader["password"].ToString();
 
-                                }
-                                else
-                                {
-
-                                    MessageBox.Show("Invalid password");
-                                }
-                            }
-                            else if (usernametxt.Text != user_name)
-                            {
-                                MessageBox.Show("Invalid Username");
-                            }
-
+                            passwordValidationResult = ValidatePassword(pass_word, hashedPasswordFromDB);
                         }
-
+                        else
+                        {
+                            MessageBox.Show("Invalid username");
+                        }
                     }
                 }
                 con.Close();
+            }
+
+            if (passwordValidationResult)
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Open();
+                    string query = "Select username from Users where username= @username AND roles='Admin';";
+
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@username", user_name);
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            reader.Read();
+
+                            if (reader.HasRows)
+                            {
+                                if (usernametxt.Text == user_name)
+                                {
+                                    MessageBox.Show("Login successful for Admin!");
+                                    admin.Show();
+                                    usernametxt.Clear();
+                                    passwordtxt.Clear();
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Invalid username");
+                                }
+                            }
+                        }
+                    }
+                    con.Close();
+                }
             }
         }
         private void ValidateManager(string user_name, string pass_word)
@@ -399,6 +423,34 @@ namespace AuthApp
             {
                 byte[] hashedInputBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(inputPassword));
                 return BitConverter.ToString(hashedInputBytes).Replace("-", "").Equals(hashedPassword);
+            }
+        }
+        private void CheckPasswordExpiry(string username)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                string query = "SELECT LastPasswordChangeDate FROM Users WHERE username = @username;";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@username", username);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            DateTime lastPasswordChangeDate = Convert.ToDateTime(reader["LastPasswordChangeDate"]);
+                            DateTime currentDate = DateTime.Now;
+
+                            if ((currentDate - lastPasswordChangeDate).TotalDays >= 90)
+                            {
+                                MessageBox.Show("Your password has expired. Please contact the administrator to set a new password.");
+                                passwordtxt.Enabled = false;
+                            }
+                        }
+                    }
+                }
+                con.Close();
             }
         }
     }

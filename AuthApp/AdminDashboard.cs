@@ -66,7 +66,6 @@ namespace AuthApp
             resetpasstxt.Visible = false;
             reset_btn.Visible = false;
 
-
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
@@ -105,7 +104,7 @@ namespace AuthApp
                 string hashedPassword = hasher.HashPassword(password);
 
 
-                string insertUserQuery = "INSERT INTO Users (username, password, active_status, roles, created_at) VALUES (@username, @password, @activestatus, @roles, @created_at)";
+                string insertUserQuery = "INSERT INTO Users (username, password, active_status, roles, created_at, LastPasswordChangeDate) VALUES (@username, @password, @activestatus, @roles, @created_at, @LastPasswordChangeDate)";
 
                 using (SqlCommand cmd = new SqlCommand(insertUserQuery, con))
                 {
@@ -114,16 +113,18 @@ namespace AuthApp
                     cmd.Parameters.AddWithValue("@activestatus", 1);
                     cmd.Parameters.AddWithValue("@roles", usercombobox.SelectedValue);
                     cmd.Parameters.AddWithValue("@created_at", dateTime);
-
+                    cmd.Parameters.AddWithValue("@LastPasswordChangeDate", dateTime);
+                    
                     int rowsAffected = cmd.ExecuteNonQuery();
 
-                    if (rowsAffected > 0)
+                    if (rowsAffected > 0 && usernametxt.Text!=null && hashedPassword!=null && usercombobox.SelectedValue!=null)
                     {
                         MessageBox.Show("User added successfully!");
                     }
                     else
                     {
-                        MessageBox.Show("Error adding user.");
+
+                        MessageBox.Show("All fields must be filled! Error adding user.");
                     }
                 }
             }
@@ -224,9 +225,9 @@ namespace AuthApp
                 {
                     con.Close();
                 }
-            }
+            } 
         }
-
+        
 
         private void changestatus_btn_Click(object sender, EventArgs e)
         {
@@ -322,10 +323,7 @@ namespace AuthApp
                             else
                             {
                                 MessageBox.Show("Current status is active, no need to change the password");
-
-
                             }
-
 
                         }
                         else
@@ -335,7 +333,6 @@ namespace AuthApp
                     }
                 }
             }
-
         }
 
         private void reset_btn_Click(object sender, EventArgs e)
