@@ -11,6 +11,7 @@ namespace AuthApp
         private int failedLoginAttempts = 0;
         private int totalLoginAttempts = 3;
         string connectionString = "Data Source=shahood-rehan;Initial Catalog=AuthenticationApp;Integrated Security=True;Trust Server Certificate=True";
+        
         public Form1()
         {
             InitializeComponent();
@@ -452,6 +453,11 @@ namespace AuthApp
                 }
                 con.Close();
             }
+        }
+
+        public void usernametxt_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

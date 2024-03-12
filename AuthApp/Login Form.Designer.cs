@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
+            exit_btn = new Button();
             label4 = new Label();
             rolecombobox = new ComboBox();
             loginbtn = new Button();
@@ -37,7 +38,6 @@
             label3 = new Label();
             label2 = new Label();
             label1 = new Label();
-            exit_btn = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -57,6 +57,17 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(1024, 768);
             panel1.TabIndex = 0;
+            // 
+            // exit_btn
+            // 
+            exit_btn.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            exit_btn.Location = new Point(490, 505);
+            exit_btn.Name = "exit_btn";
+            exit_btn.Size = new Size(118, 48);
+            exit_btn.TabIndex = 8;
+            exit_btn.Text = "Exit";
+            exit_btn.UseVisualStyleBackColor = true;
+            exit_btn.Click += exit_btn_Click;
             // 
             // label4
             // 
@@ -105,6 +116,7 @@
             usernametxt.Name = "usernametxt";
             usernametxt.Size = new Size(263, 34);
             usernametxt.TabIndex = 3;
+            usernametxt.TextChanged += usernametxt_TextChanged;
             // 
             // label3
             // 
@@ -135,17 +147,6 @@
             label1.Size = new Size(198, 38);
             label1.TabIndex = 0;
             label1.Text = "Authentication";
-            // 
-            // exit_btn
-            // 
-            exit_btn.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            exit_btn.Location = new Point(490, 505);
-            exit_btn.Name = "exit_btn";
-            exit_btn.Size = new Size(118, 48);
-            exit_btn.TabIndex = 8;
-            exit_btn.Text = "Exit";
-            exit_btn.UseVisualStyleBackColor = true;
-            exit_btn.Click += exit_btn_Click;
             // 
             // Form1
             // 

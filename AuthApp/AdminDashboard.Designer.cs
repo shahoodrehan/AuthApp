@@ -151,7 +151,7 @@
             label5.Name = "label5";
             label5.Size = new Size(93, 28);
             label5.TabIndex = 4;
-            label5.Text = "Password";
+           
             // 
             // label4
             // 

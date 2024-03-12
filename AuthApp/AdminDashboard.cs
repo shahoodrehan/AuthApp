@@ -10,19 +10,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace AuthApp
 {
     public partial class AdminDashboard : Form
     {
+       
         string connectionString = "Data Source=shahood-rehan;Initial Catalog=AuthenticationApp;Integrated Security=True;Trust Server Certificate=True";
         DateTime dateTime = DateTime.Now;
         PasswordHashing hashing = new PasswordHashing();
         public AdminDashboard()
         {
+
             InitializeComponent();
+            
             usercombobox.DropDownStyle = ComboBoxStyle.DropDownList;
+            
+
             List<string> roles = new List<string>();
             roles.Insert(0, "Manager");
             roles.Insert(1, "Operator");
@@ -127,8 +133,32 @@ namespace AuthApp
                         MessageBox.Show("All fields must be filled! Error adding user.");
                     }
                 }
+                con.Close();
             }
-            
+
+            //logs
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string[] selectedValues = { username_txt.Text, usercombobox.SelectedValue.ToString() };
+                string newValues = string.Join(",", selectedValues);
+
+                connection.Open();
+
+                using (SqlCommand command = new SqlCommand("InsertActivityLog", connection))
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@LogAction", "Insertion");
+                    command.Parameters.AddWithValue("@UserRole", "Admin");
+                    command.Parameters.AddWithValue("@UserName", "hello");
+                    command.Parameters.AddWithValue("@OldValues", "None");
+                    command.Parameters.AddWithValue("@NewValues", newValues);
+
+                    // Execute the stored procedure
+                    command.ExecuteNonQuery();
+                }
+            }
+
         }
         private bool ValidatePassword(string enteredPassword, string storedHashedPassword)
         {
