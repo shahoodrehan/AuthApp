@@ -1,23 +1,11 @@
 ﻿using Microsoft.Data.SqlClient;
-using Microsoft.Win32;
-using System.Security.Cryptography;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace AuthApp
 {
     public partial class AdminDashboard : Form
     {
-       
         string connectionString = "Data Source=shahood-rehan;Initial Catalog=AuthenticationApp;Integrated Security=True;Trust Server Certificate=True";
         DateTime dateTime = DateTime.Now;
         PasswordHashing hashing = new PasswordHashing();
@@ -25,9 +13,9 @@ namespace AuthApp
         {
 
             InitializeComponent();
-            
+
             usercombobox.DropDownStyle = ComboBoxStyle.DropDownList;
-            
+
 
             List<string> roles = new List<string>();
             roles.Insert(0, "Manager");
@@ -88,7 +76,7 @@ namespace AuthApp
         private void button1_Click(object sender, EventArgs e)
         {
             int passlength = password_txt.TextLength;
-            if(passlength<8)
+            if (passlength < 8)
             {
                 MessageBox.Show("Your password must be 8 digits long");
                 return;
@@ -120,10 +108,10 @@ namespace AuthApp
                     cmd.Parameters.AddWithValue("@roles", usercombobox.SelectedValue);
                     cmd.Parameters.AddWithValue("@created_at", dateTime);
                     cmd.Parameters.AddWithValue("@LastPasswordChangeDate", dateTime);
-                    
+
                     int rowsAffected = cmd.ExecuteNonQuery();
 
-                    if (rowsAffected > 0 && usernametxt.Text!=null && hashedPassword!=null && usercombobox.SelectedValue!=null)
+                    if (rowsAffected > 0 && usernametxt.Text != null && hashedPassword != null && usercombobox.SelectedValue != null)
                     {
                         MessageBox.Show("User added successfully!");
                     }
@@ -135,7 +123,8 @@ namespace AuthApp
                 }
                 con.Close();
             }
-
+            Form1 login = new Form1();
+            string username = login.usernametxt.Text;
             //logs
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -150,7 +139,7 @@ namespace AuthApp
 
                     command.Parameters.AddWithValue("@LogAction", "Insertion");
                     command.Parameters.AddWithValue("@UserRole", "Admin");
-                    command.Parameters.AddWithValue("@UserName", "hello");
+                    command.Parameters.AddWithValue("@UserName", username);
                     command.Parameters.AddWithValue("@OldValues", "None");
                     command.Parameters.AddWithValue("@NewValues", newValues);
 
@@ -255,9 +244,9 @@ namespace AuthApp
                 {
                     con.Close();
                 }
-            } 
+            }
         }
-        
+
 
         private void changestatus_btn_Click(object sender, EventArgs e)
         {
@@ -293,7 +282,7 @@ namespace AuthApp
                         if (rowsAffected > 0)
                         {
                             MessageBox.Show("Status updated successfully");
-                            user_validationtxt.Clear();
+                            
                             current_status_txt.Visible = false;
                             current_status_lbl.Visible = false;
                             changestatus_lbl.Visible = false;
@@ -316,14 +305,15 @@ namespace AuthApp
                     con.Close();
                 }
             }
-
+            Form1 login = new Form1();
+            string username = login.usernametxt.Text;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 string[] old_values = { current_status_txt.Text, user_validationtxt.Text, changecombobox.SelectedValue.ToString() };
-                string oldvalues= string.Join(",", old_values);
-                string[] new_values = { statuscombobox.SelectedValue.ToString(),user_validationtxt.Text, changecombobox.SelectedValue.ToString() };
-                string newvalues= string.Join(",", new_values);
+                string oldvalues = string.Join(",", old_values);
+                string[] new_values = { statuscombobox.SelectedValue.ToString(), user_validationtxt.Text, changecombobox.SelectedValue.ToString() };
+                string newvalues = string.Join(",", new_values);
                 connection.Open();
 
                 using (SqlCommand command = new SqlCommand("InsertActivityLog", connection))
@@ -333,12 +323,13 @@ namespace AuthApp
                     // Set the parameters
                     command.Parameters.AddWithValue("@LogAction", "Change Activity Status");
                     command.Parameters.AddWithValue("@UserRole", "Admin");
-                    command.Parameters.AddWithValue("@UserName", "YourUserName");
+                    command.Parameters.AddWithValue("@UserName", username);
                     command.Parameters.AddWithValue("@OldValues", oldvalues);
                     command.Parameters.AddWithValue("@NewValues", newvalues);
 
                     // Execute the stored procedure
                     command.ExecuteNonQuery();
+                    user_validationtxt.Clear();
                 }
             }
 
@@ -393,6 +384,8 @@ namespace AuthApp
 
         private void reset_btn_Click(object sender, EventArgs e)
         {
+            
+
             string enteredPassword = resetpasstxt.Text;
             List<string> previousPasswords = GetStoredPasswords();
             bool isValid = !previousPasswords.Any(previousPassword => ValidatePassword(enteredPassword, previousPassword));
@@ -409,50 +402,82 @@ namespace AuthApp
                 string password = resetpasstxt.Text;
                 string hashedPassword = hasher.HashPassword(password);
 
-                string query = "UPDATE USERS set password=@password, active_status=@active_status WHERE username=@username AND roles=@roles";
+                string query = "UPDATE USERS SET password=@password, active_status=@active_status WHERE username=@username AND roles=@roles";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
+                    cmd.Parameters.AddWithValue("@username", usernametxt.Text);
                     cmd.Parameters.AddWithValue("@password", hashedPassword);
                     cmd.Parameters.AddWithValue("@active_status", 1);
-                    cmd.Parameters.AddWithValue("@username", usernametxt.Text);
                     cmd.Parameters.AddWithValue("@roles", reset_pass_cbx.SelectedValue);
-                    int rowsaffected = cmd.ExecuteNonQuery();
-                    if (rowsaffected > 0)
+                    cmd.Parameters.AddWithValue("@created_at", dateTime);
+                    cmd.Parameters.AddWithValue("@LastPasswordChangeDate", dateTime);
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected > 0)
                     {
                         MessageBox.Show("Password reset successful");
                         MessageBox.Show("Status changed to active");
+
+                 
+                        string logAction = "Update";
+                        string userRole = "Admin"; 
+                        string userName = "YourUsername";  //edit
+
+ 
+                        string oldValues = "Old password: " + resetpasstxt.Text;
+                            ; // Provide the old password value
+                        string newValues = "New password: " + resetpasstxt.Text; // Provide the new password value
+
+                        // Execute the SQL command to insert the log record into ActivityLog table
+                        string insertLogQuery = "INSERT INTO ActivityLog (LogTime, LogAction, UserRole, UserName, OldValues, NewValues) " +
+                                                "VALUES (@logTime, @logAction, @userRole, @userName, @oldValues, @newValues)";
+
+                        using (SqlCommand logCmd = new SqlCommand(insertLogQuery, con))
+                        {
+                            logCmd.Parameters.AddWithValue("@logTime", DateTime.Now);
+                            logCmd.Parameters.AddWithValue("@logAction", logAction);
+                            logCmd.Parameters.AddWithValue("@userRole", userRole);
+                            logCmd.Parameters.AddWithValue("@userName", userName);
+                            logCmd.Parameters.AddWithValue("@oldValues", oldValues);
+                            logCmd.Parameters.AddWithValue("@newValues", newValues);
+
+                            logCmd.ExecuteNonQuery();
+                        }
+
                         return;
                     }
                 }
                 con.Close();
             }
-            
 
-            //triggers
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                string[] oldvalues = { reset_pass_cbx.SelectedValue.ToString(), usernametxt.Text, "Old password" };
-                string[] newvalues = { reset_pass_cbx.SelectedValue.ToString(), usernametxt.Text, "New password" };
-                string old_values = string.Join(",", oldvalues);
-                string new_values = string.Join(",", newvalues);
-                connection.Open();
 
-                using (SqlCommand command = new SqlCommand("InsertActivityLog", connection))
-                {
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
+            //Form1 login =  new Form1();
 
-                    // Set the parameters
-                    command.Parameters.AddWithValue("@LogAction", "Change Password");
-                    command.Parameters.AddWithValue("@UserRole", "Admin");
-                    command.Parameters.AddWithValue("@UserName", "YourUserName");
-                    command.Parameters.AddWithValue("@OldValues", oldvalues);
-                    command.Parameters.AddWithValue("@NewValues", newvalues);
+            //using (SqlConnection connection = new SqlConnection(connectionString))
+            //{
 
-                    // Execute the stored procedure
-                    command.ExecuteNonQuery();
-                }
-            }
+            //    connection.Open();
+
+            //    using (SqlCommand command = new SqlCommand("InsertActivityLog", connection))
+            //    {
+            //        command.CommandType = System.Data.CommandType.StoredProcedure;
+
+            //        // Set the parameters
+            //        command.Parameters.AddWithValue("@LogAction", "password change Status");
+            //        command.Parameters.AddWithValue("@UserRole", "Admin");
+            //        command.Parameters.AddWithValue("@UserName", login.usernametxt.Text);
+            //        command.Parameters.AddWithValue("@OldValues", "I am old value");
+            //        command.Parameters.AddWithValue("@NewValues", "I am new value");
+
+            //        // Execute the stored procedure
+            //        command.ExecuteNonQuery();
+            //        user_validationtxt.Clear();
+            //    }
+            //}
+
+
+
 
         }
 
@@ -460,5 +485,5 @@ namespace AuthApp
         {
             tabControl1.SelectedIndex = 2;
         }
-    }   
+    }
 }

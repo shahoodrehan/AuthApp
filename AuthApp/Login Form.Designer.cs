@@ -166,7 +166,6 @@
 
         private Panel panel1;
         private TextBox passwordtxt;
-        private TextBox usernametxt;
         private Label label3;
         private Label label2;
         private Label label1;
@@ -174,5 +173,6 @@
         private Label label4;
         private ComboBox rolecombobox;
         private Button exit_btn;
+        public TextBox usernametxt;
     }
 }
