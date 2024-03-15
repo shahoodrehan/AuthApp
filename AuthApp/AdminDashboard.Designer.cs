@@ -69,6 +69,7 @@
             createuser_btn = new Button();
             logout_btn = new Button();
             label1 = new Label();
+            label12 = new Label();
             panel1.SuspendLayout();
             tabControl1.SuspendLayout();
             createuser.SuspendLayout();
@@ -104,6 +105,7 @@
             // createuser
             // 
             createuser.BackColor = Color.SlateGray;
+            createuser.Controls.Add(label12);
             createuser.Controls.Add(create_btn);
             createuser.Controls.Add(password_txt);
             createuser.Controls.Add(username_txt);
@@ -149,9 +151,8 @@
             label5.Font = new Font("Segoe UI", 12F);
             label5.Location = new Point(158, 425);
             label5.Name = "label5";
-            label5.Size = new Size(93, 28);
+            label5.Size = new Size(0, 28);
             label5.TabIndex = 4;
-           
             // 
             // label4
             // 
@@ -231,7 +232,7 @@
             // 
             // current_status_txt
             // 
-            current_status_txt.Location = new Point(285, 457);
+            current_status_txt.Location = new Point(285, 436);
             current_status_txt.Name = "current_status_txt";
             current_status_txt.Size = new Size(217, 27);
             current_status_txt.TabIndex = 10;
@@ -240,7 +241,7 @@
             // 
             current_status_lbl.AutoSize = true;
             current_status_lbl.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            current_status_lbl.Location = new Point(129, 453);
+            current_status_lbl.Location = new Point(128, 432);
             current_status_lbl.Name = "current_status_lbl";
             current_status_lbl.Size = new Size(135, 28);
             current_status_lbl.TabIndex = 9;
@@ -499,6 +500,16 @@
             label1.TabIndex = 0;
             label1.Text = "Dashbaord";
             // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label12.Location = new Point(146, 424);
+            label12.Name = "label12";
+            label12.Size = new Size(93, 28);
+            label12.TabIndex = 8;
+            label12.Text = "Password";
+            // 
             // AdminDashboard
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -565,5 +576,6 @@
         private Button Validate_btn;
         private TextBox resetpasstxt;
         private Button reset_btn;
+        private Label label12;
     }
 }

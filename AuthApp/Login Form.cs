@@ -6,12 +6,12 @@ namespace AuthApp
 {
     public partial class Form1 : Form
     {
+        string connectionString = "Data Source=shahood-rehan;Initial Catalog=AuthenticationApp;Integrated Security=True;Trust Server Certificate=True";
         string hashedPasswordFromDB;
         AdminDashboard admin = new AdminDashboard();
         private int failedLoginAttempts = 0;
         private int totalLoginAttempts = 3;
-        string connectionString = "Data Source=shahood-rehan;Initial Catalog=AuthenticationApp;Integrated Security=True;Trust Server Certificate=True";
-        
+
         public Form1()
         {
             InitializeComponent();
@@ -26,8 +26,6 @@ namespace AuthApp
             rolecombobox.DataSource = roles;
             rolecombobox.SelectedIndex = 0;
             rolecombobox.Text = "Select your role";
-
-
         }
 
         private void loginbtn_Click(object sender, EventArgs e)
@@ -458,6 +456,11 @@ namespace AuthApp
         public void usernametxt_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void passwordtxt_TextChanged(object sender, EventArgs e)
+        {
+            passwordtxt.PasswordChar = '*';
         }
     }
 }

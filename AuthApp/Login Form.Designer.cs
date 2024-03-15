@@ -107,6 +107,7 @@
             passwordtxt.Name = "passwordtxt";
             passwordtxt.Size = new Size(263, 34);
             passwordtxt.TabIndex = 4;
+            passwordtxt.TextChanged += passwordtxt_TextChanged;
             // 
             // usernametxt
             // 

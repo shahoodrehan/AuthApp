@@ -316,6 +316,32 @@ namespace AuthApp
                     con.Close();
                 }
             }
+
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string[] old_values = { current_status_txt.Text, user_validationtxt.Text, changecombobox.SelectedValue.ToString() };
+                string oldvalues= string.Join(",", old_values);
+                string[] new_values = { statuscombobox.SelectedValue.ToString(),user_validationtxt.Text, changecombobox.SelectedValue.ToString() };
+                string newvalues= string.Join(",", new_values);
+                connection.Open();
+
+                using (SqlCommand command = new SqlCommand("InsertActivityLog", connection))
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    // Set the parameters
+                    command.Parameters.AddWithValue("@LogAction", "Change Activity Status");
+                    command.Parameters.AddWithValue("@UserRole", "Admin");
+                    command.Parameters.AddWithValue("@UserName", "YourUserName");
+                    command.Parameters.AddWithValue("@OldValues", oldvalues);
+                    command.Parameters.AddWithValue("@NewValues", newvalues);
+
+                    // Execute the stored procedure
+                    command.ExecuteNonQuery();
+                }
+            }
+
         }
 
         private void logout_btn_Click(object sender, EventArgs e)
@@ -387,7 +413,7 @@ namespace AuthApp
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
-                    cmd.Parameters.AddWithValue("@password", resetpasstxt.Text);
+                    cmd.Parameters.AddWithValue("@password", hashedPassword);
                     cmd.Parameters.AddWithValue("@active_status", 1);
                     cmd.Parameters.AddWithValue("@username", usernametxt.Text);
                     cmd.Parameters.AddWithValue("@roles", reset_pass_cbx.SelectedValue);
@@ -399,7 +425,35 @@ namespace AuthApp
                         return;
                     }
                 }
+                con.Close();
             }
+            
+
+            //triggers
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string[] oldvalues = { reset_pass_cbx.SelectedValue.ToString(), usernametxt.Text, "Old password" };
+                string[] newvalues = { reset_pass_cbx.SelectedValue.ToString(), usernametxt.Text, "New password" };
+                string old_values = string.Join(",", oldvalues);
+                string new_values = string.Join(",", newvalues);
+                connection.Open();
+
+                using (SqlCommand command = new SqlCommand("InsertActivityLog", connection))
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    // Set the parameters
+                    command.Parameters.AddWithValue("@LogAction", "Change Password");
+                    command.Parameters.AddWithValue("@UserRole", "Admin");
+                    command.Parameters.AddWithValue("@UserName", "YourUserName");
+                    command.Parameters.AddWithValue("@OldValues", oldvalues);
+                    command.Parameters.AddWithValue("@NewValues", newvalues);
+
+                    // Execute the stored procedure
+                    command.ExecuteNonQuery();
+                }
+            }
+
         }
 
         private void change_pass_btn_Click(object sender, EventArgs e)
