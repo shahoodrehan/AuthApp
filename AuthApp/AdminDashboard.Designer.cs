@@ -31,6 +31,7 @@
             panel1 = new Panel();
             tabControl1 = new TabControl();
             createuser = new TabPage();
+            label12 = new Label();
             create_btn = new Button();
             password_txt = new TextBox();
             username_txt = new TextBox();
@@ -69,7 +70,6 @@
             createuser_btn = new Button();
             logout_btn = new Button();
             label1 = new Label();
-            label12 = new Label();
             panel1.SuspendLayout();
             tabControl1.SuspendLayout();
             createuser.SuspendLayout();
@@ -89,7 +89,6 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(1012, 724);
             panel1.TabIndex = 0;
-            panel1.Paint += panel1_Paint;
             // 
             // tabControl1
             // 
@@ -120,6 +119,16 @@
             createuser.Size = new Size(698, 691);
             createuser.TabIndex = 0;
             createuser.Text = "createuser";
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label12.Location = new Point(146, 424);
+            label12.Name = "label12";
+            label12.Size = new Size(93, 28);
+            label12.TabIndex = 8;
+            label12.Text = "Password";
             // 
             // create_btn
             // 
@@ -304,7 +313,6 @@
             changecombobox.Name = "changecombobox";
             changecombobox.Size = new Size(217, 28);
             changecombobox.TabIndex = 2;
-            changecombobox.SelectedIndexChanged += changecombobox_SelectedIndexChanged;
             // 
             // user_validationtxt
             // 
@@ -347,9 +355,9 @@
             panel4.Controls.Add(label10);
             panel4.Controls.Add(label9);
             panel4.ForeColor = SystemColors.ButtonHighlight;
-            panel4.Location = new Point(-4, -3);
+            panel4.Location = new Point(-4, -26);
             panel4.Name = "panel4";
-            panel4.Size = new Size(706, 695);
+            panel4.Size = new Size(706, 718);
             panel4.TabIndex = 0;
             // 
             // reset_btn
@@ -500,16 +508,6 @@
             label1.TabIndex = 0;
             label1.Text = "Dashbaord";
             // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label12.Location = new Point(146, 424);
-            label12.Name = "label12";
-            label12.Size = new Size(93, 28);
-            label12.TabIndex = 8;
-            label12.Text = "Password";
-            // 
             // AdminDashboard
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -577,5 +575,6 @@
         private TextBox resetpasstxt;
         private Button reset_btn;
         private Label label12;
+        private Label label13;
     }
 }

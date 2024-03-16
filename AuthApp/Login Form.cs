@@ -6,11 +6,13 @@ namespace AuthApp
 {
     public partial class Form1 : Form
     {
+        //connectionstring 
         string connectionString = "Data Source=shahood-rehan;Initial Catalog=AuthenticationApp;Integrated Security=True;Trust Server Certificate=True";
         string hashedPasswordFromDB;
         AdminDashboard admin = new AdminDashboard();
         private int failedLoginAttempts = 0;
         private int totalLoginAttempts = 3;
+        public static string username_admin;
 
         public Form1()
         {
@@ -40,7 +42,7 @@ namespace AuthApp
                 username = usernametxt.Text;
                 password = passwordtxt.Text;
                 ValidateAdmin(username, password);
-                login.Dispose();
+                
 
             }
             else if (selectedRole == "Manager")
@@ -49,7 +51,7 @@ namespace AuthApp
                 password = passwordtxt.Text;
                 CheckPasswordExpiry(username);
                 ValidateManager(username, password);
-                login.Dispose();
+           
 
             }
             else if (selectedRole == "Operator")
@@ -99,12 +101,13 @@ namespace AuthApp
                         }
                         else
                         {
-                            MessageBox.Show("Invalid username");
+                            MessageBox.Show("Invalid username or password");
                         }
                     }
                 }
                 con.Close();
             }
+           
 
             if (passwordValidationResult)
             {
@@ -126,13 +129,11 @@ namespace AuthApp
                                 if (usernametxt.Text == user_name)
                                 {
                                     MessageBox.Show("Login successful for Admin!");
+                                    username_admin = usernametxt.Text;
+                                    this.Hide();
                                     admin.Show();
-                                    usernametxt.Clear();
-                                    passwordtxt.Clear();
-                                }
-                                else
-                                {
-                                    MessageBox.Show("Invalid username");
+                                
+
                                 }
                             }
                         }
@@ -207,8 +208,8 @@ namespace AuthApp
                                 if (usernametxt.Text == user_name)
                                 {
                                     MessageBox.Show("Login successful for Manager!");
-                                    usernametxt.Clear();
-                                    passwordtxt.Clear();
+                                    this.Hide();
+                                    //logic to show manager his dashboard
                                 }
                                 else
                                 {
@@ -287,8 +288,8 @@ namespace AuthApp
                                 if (usernametxt.Text == user_name)
                                 {
                                     MessageBox.Show("Login successful for Operator!");
-                                    usernametxt.Clear();
-                                    passwordtxt.Clear();
+                                    this.Hide();
+                                    //logic to implement operator's dashboard
                                 }
                                 else
                                 {
@@ -368,8 +369,8 @@ namespace AuthApp
                                 if (usernametxt.Text == user_name)
                                 {
                                     MessageBox.Show("Login successful for Engineer!");
-                                    usernametxt.Clear();
-                                    passwordtxt.Clear();
+                                    this.Hide();
+                                    //logic to implement engineer's dashboard
                                 }
                                 else
                                 {
@@ -451,11 +452,6 @@ namespace AuthApp
                 }
                 con.Close();
             }
-        }
-
-        public void usernametxt_TextChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void passwordtxt_TextChanged(object sender, EventArgs e)

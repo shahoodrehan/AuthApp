@@ -6,22 +6,22 @@ namespace AuthApp
 {
     public partial class AdminDashboard : Form
     {
+        //Connection String
         string connectionString = "Data Source=shahood-rehan;Initial Catalog=AuthenticationApp;Integrated Security=True;Trust Server Certificate=True";
+
         DateTime dateTime = DateTime.Now;
         PasswordHashing hashing = new PasswordHashing();
+
         public AdminDashboard()
         {
-
             InitializeComponent();
 
+            //Initialization of different components
             usercombobox.DropDownStyle = ComboBoxStyle.DropDownList;
-
-
             List<string> roles = new List<string>();
             roles.Insert(0, "Manager");
             roles.Insert(1, "Operator");
             roles.Insert(2, "Engineer");
-
             usercombobox.DataSource = roles;
             usercombobox.SelectedIndex = 0;
             usercombobox.Text = "Select your role";
@@ -30,15 +30,12 @@ namespace AuthApp
             users.Insert(0, "Engineer");
             users.Insert(1, "Manager");
             users.Insert(2, "Operator");
-
             changecombobox.DataSource = users;
             changecombobox.SelectedIndex = 0;
 
             List<string> status = new List<string>();
             status.Insert(0, "Active");
             status.Insert(1, "Deactive");
-
-
             statuscombobox.DataSource = status;
             statuscombobox.Text = "Select status";
 
@@ -54,16 +51,9 @@ namespace AuthApp
             changestatus_lbl.Visible = false;
             statuscombobox.Visible = false;
             changestatus_btn.Visible = false;
-
-            //reset
             new_pass_lbl.Visible = false;
             resetpasstxt.Visible = false;
             reset_btn.Visible = false;
-
-        }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
 
         }
 
@@ -114,17 +104,17 @@ namespace AuthApp
                     if (rowsAffected > 0 && usernametxt.Text != null && hashedPassword != null && usercombobox.SelectedValue != null)
                     {
                         MessageBox.Show("User added successfully!");
+                        username_txt.Clear();
+                        password_txt.Clear();
                     }
                     else
                     {
-
                         MessageBox.Show("All fields must be filled! Error adding user.");
                     }
                 }
                 con.Close();
             }
-            Form1 login = new Form1();
-            string username = login.usernametxt.Text;
+
             //logs
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -139,11 +129,10 @@ namespace AuthApp
 
                     command.Parameters.AddWithValue("@LogAction", "Insertion");
                     command.Parameters.AddWithValue("@UserRole", "Admin");
-                    command.Parameters.AddWithValue("@UserName", username);
+                    command.Parameters.AddWithValue("@UserName", Form1.username_admin);
                     command.Parameters.AddWithValue("@OldValues", "None");
                     command.Parameters.AddWithValue("@NewValues", newValues);
 
-                    // Execute the stored procedure
                     command.ExecuteNonQuery();
                 }
             }
@@ -157,16 +146,12 @@ namespace AuthApp
             return string.Equals(hashedEnteredPassword, storedHashedPassword, StringComparison.OrdinalIgnoreCase);
         }
 
-
         private void button1_Click_1(object sender, EventArgs e)
         {
             tabControl1.SelectedIndex = 1;
         }
 
-        private void changecombobox_SelectedIndexChanged(object sender, EventArgs e)
-        {
 
-        }
         private List<string> GetStoredPasswords()
         {
             List<string> previousPasswords = new List<string>();
@@ -212,13 +197,11 @@ namespace AuthApp
                                 reader.Read();
                                 int activeStatus = Convert.ToInt32(reader["active_status"]);
                                 current_status_txt.Visible = true;
-
                                 statuscombobox.Visible = true;
                                 current_status_lbl.Visible = true;
                                 changestatus_lbl.Visible = true;
                                 password_txt.Visible = true;
                                 changestatus_btn.Visible = true;
-
 
                                 if (activeStatus == 1)
                                 {
@@ -250,8 +233,6 @@ namespace AuthApp
 
         private void changestatus_btn_Click(object sender, EventArgs e)
         {
-
-
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 try
@@ -282,7 +263,7 @@ namespace AuthApp
                         if (rowsAffected > 0)
                         {
                             MessageBox.Show("Status updated successfully");
-                            
+
                             current_status_txt.Visible = false;
                             current_status_lbl.Visible = false;
                             changestatus_lbl.Visible = false;
@@ -305,8 +286,7 @@ namespace AuthApp
                     con.Close();
                 }
             }
-            Form1 login = new Form1();
-            string username = login.usernametxt.Text;
+
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -323,16 +303,13 @@ namespace AuthApp
                     // Set the parameters
                     command.Parameters.AddWithValue("@LogAction", "Change Activity Status");
                     command.Parameters.AddWithValue("@UserRole", "Admin");
-                    command.Parameters.AddWithValue("@UserName", username);
+                    command.Parameters.AddWithValue("@UserName", Form1.username_admin);
                     command.Parameters.AddWithValue("@OldValues", oldvalues);
                     command.Parameters.AddWithValue("@NewValues", newvalues);
-
-                    // Execute the stored procedure
                     command.ExecuteNonQuery();
                     user_validationtxt.Clear();
                 }
             }
-
         }
 
         private void logout_btn_Click(object sender, EventArgs e)
@@ -384,8 +361,12 @@ namespace AuthApp
 
         private void reset_btn_Click(object sender, EventArgs e)
         {
-            
-
+            int passlength = resetpasstxt.TextLength;
+            if (passlength < 8)
+            {
+                MessageBox.Show("Your password must be 8 digits long");
+                return;
+            }
             string enteredPassword = resetpasstxt.Text;
             List<string> previousPasswords = GetStoredPasswords();
             bool isValid = !previousPasswords.Any(previousPassword => ValidatePassword(enteredPassword, previousPassword));
@@ -419,17 +400,15 @@ namespace AuthApp
                         MessageBox.Show("Password reset successful");
                         MessageBox.Show("Status changed to active");
 
-                 
+
                         string logAction = "Update";
-                        string userRole = "Admin"; 
-                        string userName = "YourUsername";  //edit
+                        string userRole = "Admin";
+                        string userName = Form1.username_admin;
 
- 
-                        string oldValues = "Old password: " + resetpasstxt.Text;
-                            ; // Provide the old password value
-                        string newValues = "New password: " + resetpasstxt.Text; // Provide the new password value
 
-                        // Execute the SQL command to insert the log record into ActivityLog table
+                        string oldValues = "Password is hidden due to security";
+                        string newValues = "Password is hidden due to security";
+
                         string insertLogQuery = "INSERT INTO ActivityLog (LogTime, LogAction, UserRole, UserName, OldValues, NewValues) " +
                                                 "VALUES (@logTime, @logAction, @userRole, @userName, @oldValues, @newValues)";
 
@@ -444,41 +423,16 @@ namespace AuthApp
 
                             logCmd.ExecuteNonQuery();
                         }
-
+                        usernametxt.Clear();
+                        resetpasstxt.Clear();
+                        new_pass_lbl.Hide();
+                        resetpasstxt.Hide();
+                        reset_btn.Hide();
                         return;
                     }
                 }
                 con.Close();
             }
-
-
-            //Form1 login =  new Form1();
-
-            //using (SqlConnection connection = new SqlConnection(connectionString))
-            //{
-
-            //    connection.Open();
-
-            //    using (SqlCommand command = new SqlCommand("InsertActivityLog", connection))
-            //    {
-            //        command.CommandType = System.Data.CommandType.StoredProcedure;
-
-            //        // Set the parameters
-            //        command.Parameters.AddWithValue("@LogAction", "password change Status");
-            //        command.Parameters.AddWithValue("@UserRole", "Admin");
-            //        command.Parameters.AddWithValue("@UserName", login.usernametxt.Text);
-            //        command.Parameters.AddWithValue("@OldValues", "I am old value");
-            //        command.Parameters.AddWithValue("@NewValues", "I am new value");
-
-            //        // Execute the stored procedure
-            //        command.ExecuteNonQuery();
-            //        user_validationtxt.Clear();
-            //    }
-            //}
-
-
-
-
         }
 
         private void change_pass_btn_Click(object sender, EventArgs e)

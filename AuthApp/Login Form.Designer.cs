@@ -117,7 +117,6 @@
             usernametxt.Name = "usernametxt";
             usernametxt.Size = new Size(263, 34);
             usernametxt.TabIndex = 3;
-            usernametxt.TextChanged += usernametxt_TextChanged;
             // 
             // label3
             // 
@@ -143,7 +142,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.Location = new Point(388, 110);
+            label1.Location = new Point(388, 108);
             label1.Name = "label1";
             label1.Size = new Size(198, 38);
             label1.TabIndex = 0;
