@@ -80,11 +80,12 @@ namespace AuthApp
         private void ValidateAdmin(string user_name, string pass_word)
         {
             bool passwordValidationResult = false;
+            bool userFound = false;
 
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
-                string query = "Select password from Users where username= @username AND roles='Admin';";
+                string query = "SELECT password FROM Users WHERE username = @username AND roles = 'Admin';";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
@@ -94,54 +95,34 @@ namespace AuthApp
                     {
                         if (reader.HasRows)
                         {
+                            userFound = true;
                             reader.Read();
                             hashedPasswordFromDB = reader["password"].ToString();
-
                             passwordValidationResult = ValidatePassword(pass_word, hashedPasswordFromDB);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Invalid username or password");
                         }
                     }
                 }
-                con.Close();
             }
-           
+
+            if (!userFound)
+            {
+                MessageBox.Show("Incorrect username.");
+                return;
+            }
 
             if (passwordValidationResult)
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    con.Open();
-                    string query = "Select username from Users where username= @username AND roles='Admin';";
-
-                    using (SqlCommand cmd = new SqlCommand(query, con))
-                    {
-                        cmd.Parameters.AddWithValue("@username", user_name);
-
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            reader.Read();
-
-                            if (reader.HasRows)
-                            {
-                                if (usernametxt.Text == user_name)
-                                {
-                                    MessageBox.Show("Login successful for Admin!");
-                                    username_admin = usernametxt.Text;
-                                    this.Hide();
-                                    admin.Show();
-                                
-
-                                }
-                            }
-                        }
-                    }
-                    con.Close();
-                }
+                MessageBox.Show("Login successful for Admin!");
+                username_admin = user_name;
+                this.Hide();
+                admin.Show();
+            }
+            else
+            {
+                MessageBox.Show("Incorrect password.");
             }
         }
+
         private void ValidateManager(string user_name, string pass_word)
         {
             bool passwordValidationResult = false;

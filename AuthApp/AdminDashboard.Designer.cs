@@ -142,17 +142,18 @@
             // 
             // password_txt
             // 
-            password_txt.Location = new Point(297, 426);
+            password_txt.Location = new Point(273, 428);
             password_txt.Name = "password_txt";
             password_txt.Size = new Size(193, 27);
             password_txt.TabIndex = 6;
             // 
             // username_txt
             // 
-            username_txt.Location = new Point(298, 350);
+            username_txt.Location = new Point(274, 350);
             username_txt.Name = "username_txt";
             username_txt.Size = new Size(192, 27);
             username_txt.TabIndex = 5;
+            username_txt.TextChanged += username_txt_TextChanged;
             // 
             // label5
             // 
@@ -545,7 +546,6 @@
         private ComboBox usercombobox;
         private Button create_btn;
         private TextBox password_txt;
-        private TextBox username_txt;
         private Label label5;
         private Label label4;
         private Label label3;
@@ -576,5 +576,6 @@
         private Button reset_btn;
         private Label label12;
         private Label label13;
+        private TextBox username_txt;
     }
 }

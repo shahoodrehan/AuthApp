@@ -71,6 +71,7 @@ namespace AuthApp
                 MessageBox.Show("Your password must be 8 digits long");
                 return;
             }
+
             string enteredPassword = password_txt.Text;
             List<string> previousPasswords = GetStoredPasswords();
             bool isValid = !previousPasswords.Any(previousPassword => ValidatePassword(enteredPassword, previousPassword));
@@ -87,7 +88,6 @@ namespace AuthApp
                 string password = password_txt.Text;
                 string hashedPassword = hasher.HashPassword(password);
 
-
                 string insertUserQuery = "INSERT INTO Users (username, password, active_status, roles, created_at, LastPasswordChangeDate) VALUES (@username, @password, @activestatus, @roles, @created_at, @LastPasswordChangeDate)";
 
                 using (SqlCommand cmd = new SqlCommand(insertUserQuery, con))
@@ -101,27 +101,26 @@ namespace AuthApp
 
                     int rowsAffected = cmd.ExecuteNonQuery();
 
-                    if (rowsAffected > 0 && usernametxt.Text != null && hashedPassword != null && usercombobox.SelectedValue != null)
+                    if (rowsAffected > 0 && !string.IsNullOrEmpty(username_txt.Text) && !string.IsNullOrEmpty(hashedPassword) && usercombobox.SelectedValue != null)
                     {
                         MessageBox.Show("User added successfully!");
-                        username_txt.Clear();
-                        password_txt.Clear();
+
                     }
                     else
                     {
                         MessageBox.Show("All fields must be filled! Error adding user.");
                     }
                 }
-                con.Close();
             }
 
             //logs
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string[] selectedValues = { username_txt.Text, usercombobox.SelectedValue.ToString() };
-                string newValues = string.Join(",", selectedValues);
-
                 connection.Open();
+
+                // Get the values after inserting the user to ensure they are updated
+                string[] selectedValues = { usercombobox.SelectedValue?.ToString(), username_txt.Text };
+                string newValues = string.Join(",", selectedValues);
 
                 using (SqlCommand command = new SqlCommand("InsertActivityLog", connection))
                 {
@@ -129,15 +128,17 @@ namespace AuthApp
 
                     command.Parameters.AddWithValue("@EventType", "Insertion of a new user");
                     command.Parameters.AddWithValue("@UserRole", "Admin");
-                    command.Parameters.AddWithValue("@UserName", Form1.username_admin);
+                    command.Parameters.AddWithValue("@AppUser", Form1.username_admin);
                     command.Parameters.AddWithValue("@OldValues", "None");
                     command.Parameters.AddWithValue("@NewValues", newValues);
 
                     command.ExecuteNonQuery();
+                    username_txt.Clear();
+                    password_txt.Clear();
                 }
             }
-
         }
+
         private bool ValidatePassword(string enteredPassword, string storedHashedPassword)
         {
             PasswordHashing hasher = new PasswordHashing();
@@ -303,7 +304,7 @@ namespace AuthApp
                     // Set the parameters
                     command.Parameters.AddWithValue("@EventType", "Change user status");
                     command.Parameters.AddWithValue("@UserRole", "Admin");
-                    command.Parameters.AddWithValue("@UserName", Form1.username_admin);
+                    command.Parameters.AddWithValue("@AppUser", Form1.username_admin);
                     command.Parameters.AddWithValue("@OldValues", oldvalues);
                     command.Parameters.AddWithValue("@NewValues", newvalues);
                     command.ExecuteNonQuery();
@@ -438,6 +439,16 @@ namespace AuthApp
         private void change_pass_btn_Click(object sender, EventArgs e)
         {
             tabControl1.SelectedIndex = 2;
+        }
+
+        private void username_txt_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void password_txt_TextChanged(object sender, EventArgs e)
+        {
+            password_txt.PasswordChar = '*';
         }
     }
 }
