@@ -127,7 +127,7 @@ namespace AuthApp
                 {
                     command.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    command.Parameters.AddWithValue("@LogAction", "Insertion");
+                    command.Parameters.AddWithValue("@EventType", "Insertion of a new user");
                     command.Parameters.AddWithValue("@UserRole", "Admin");
                     command.Parameters.AddWithValue("@UserName", Form1.username_admin);
                     command.Parameters.AddWithValue("@OldValues", "None");
@@ -301,7 +301,7 @@ namespace AuthApp
                     command.CommandType = System.Data.CommandType.StoredProcedure;
 
                     // Set the parameters
-                    command.Parameters.AddWithValue("@LogAction", "Change Activity Status");
+                    command.Parameters.AddWithValue("@EventType", "Change user status");
                     command.Parameters.AddWithValue("@UserRole", "Admin");
                     command.Parameters.AddWithValue("@UserName", Form1.username_admin);
                     command.Parameters.AddWithValue("@OldValues", oldvalues);
@@ -401,23 +401,23 @@ namespace AuthApp
                         MessageBox.Show("Status changed to active");
 
 
-                        string logAction = "Update";
+                        string logAction = "Update password";
                         string userRole = "Admin";
                         string userName = Form1.username_admin;
 
 
-                        string oldValues = "Password is hidden due to security";
-                        string newValues = "Password is hidden due to security";
+                        string oldValues = "Password is encrypted";
+                        string newValues = "Password is encrypted";
 
-                        string insertLogQuery = "INSERT INTO ActivityLog (LogTime, LogAction, UserRole, UserName, OldValues, NewValues) " +
-                                                "VALUES (@logTime, @logAction, @userRole, @userName, @oldValues, @newValues)";
+                        string insertLogQuery = "INSERT INTO Runtime_Auditing (DateTime, EventType, UserRole, AppUser, OldValues, NewValues) " +
+                                                "VALUES (@DateTime, @EventType, @userRole, @AppUser, @oldValues, @newValues)";
 
                         using (SqlCommand logCmd = new SqlCommand(insertLogQuery, con))
                         {
-                            logCmd.Parameters.AddWithValue("@logTime", DateTime.Now);
-                            logCmd.Parameters.AddWithValue("@logAction", logAction);
+                            logCmd.Parameters.AddWithValue("@DateTime", DateTime.Now);
+                            logCmd.Parameters.AddWithValue("@EventType", logAction);
                             logCmd.Parameters.AddWithValue("@userRole", userRole);
-                            logCmd.Parameters.AddWithValue("@userName", userName);
+                            logCmd.Parameters.AddWithValue("@AppUser", userName);
                             logCmd.Parameters.AddWithValue("@oldValues", oldValues);
                             logCmd.Parameters.AddWithValue("@newValues", newValues);
 
@@ -441,3 +441,4 @@ namespace AuthApp
         }
     }
 }
+    
