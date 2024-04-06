@@ -119,7 +119,6 @@ namespace AuthApp
             {
                 connection.Open();
 
-                // Get the values after inserting the user to ensure they are updated
                 string[] selectedValues = { usercombobox.SelectedValue?.ToString(), username_txt.Text };
                 string newValues = string.Join(",", selectedValues);
 
@@ -129,7 +128,7 @@ namespace AuthApp
 
                     command.Parameters.AddWithValue("@EventType", "Insertion of a new user");
                     command.Parameters.AddWithValue("@UserRole", "Admin");
-                    command.Parameters.AddWithValue("@AppUser", Form1.username_admin);
+                    command.Parameters.AddWithValue("@AppUser", Form1.logged_user);
                     command.Parameters.AddWithValue("@OldValues", "None");
                     command.Parameters.AddWithValue("@NewValues", newValues);
 
@@ -305,7 +304,7 @@ namespace AuthApp
                     // Set the parameters
                     command.Parameters.AddWithValue("@EventType", "Change user status");
                     command.Parameters.AddWithValue("@UserRole", "Admin");
-                    command.Parameters.AddWithValue("@AppUser", Form1.username_admin);
+                    command.Parameters.AddWithValue("@AppUser", Form1.logged_user);
                     command.Parameters.AddWithValue("@OldValues", oldvalues);
                     command.Parameters.AddWithValue("@NewValues", newvalues);
                     command.ExecuteNonQuery();
@@ -404,7 +403,7 @@ namespace AuthApp
 
                         string logAction = "Update password";
                         string userRole = "Admin";
-                        string userName = Form1.username_admin;
+                        string userName = Form1.logged_user;
 
 
                         string oldValues = "Password is encrypted";

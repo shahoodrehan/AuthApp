@@ -12,9 +12,10 @@ namespace AuthApp
         AdminDashboard admin = new AdminDashboard();
         private int failedLoginAttempts = 0;
         private int totalLoginAttempts = 3;
-        public static string username_admin;
+        public static string logged_user;
         private readonly string _connectionString;
-
+        
+        public Dictionary<string, string> Roles { get; private set; }
         public Form1()
         {
             InitializeComponent();
@@ -28,66 +29,278 @@ namespace AuthApp
             var config = JsonSerializer.Deserialize<Config>(json);
             _connectionString = config.ConnectionString;
 
-            rolecombobox.DropDownStyle = ComboBoxStyle.DropDownList;
-            List<string> roles = new List<string>();
-            roles.Insert(0, "Admin");
-            roles.Insert(1, "Manager");
-            roles.Insert(2, "Operator");
-            roles.Insert(3, "Engineer");
+            ///
+            string json_;
+            using (StreamReader reader = new StreamReader("roles.json"))
+            {
+                json = reader.ReadToEnd();
+            }
 
-            rolecombobox.DataSource = roles;
-            rolecombobox.SelectedIndex = 0;
-            rolecombobox.Text = "Select your role";
+            var config_ = JsonSerializer.Deserialize<RolesConfig>(json);
+            Roles = config_.Roles;
+        
+            //ReadRolesFromConfig();
+
+            if (Roles != null)
+            {
+                rolecombobox.DropDownStyle = ComboBoxStyle.DropDownList;
+                rolecombobox.DataSource = Roles.ToList();
+                rolecombobox.DisplayMember = "Value";
+                rolecombobox.ValueMember = "Key";
+                rolecombobox.SelectedIndex = 0;
+                rolecombobox.Text = "Select your role";
+            }
+            else
+            {
+                MessageBox.Show("Error: Roles data could not be loaded.");
+            }
         }
-
+        
         private void loginbtn_Click(object sender, EventArgs e)
         {
             Form1 login = new Form1();
             AdminDashboard admin = new AdminDashboard();
-            string username, password;
-            string selectedRole = rolecombobox.SelectedItem.ToString();
-
-            if (selectedRole == "Admin")
+            string username = usernametxt.Text;
+            string password = passwordtxt.Text;
+            string selectedRoleKey = rolecombobox.SelectedValue?.ToString();
+    
+            if (string.IsNullOrEmpty(selectedRoleKey))
             {
-                username = usernametxt.Text;
-                password = passwordtxt.Text;
-                ValidateAdmin(username, password);
-                
-
+                MessageBox.Show("Please select a role.");
+                return;
             }
-            else if (selectedRole == "Manager")
+            switch (selectedRoleKey)
             {
-                username = usernametxt.Text;
-                password = passwordtxt.Text;
-                CheckPasswordExpiry(username);
-                ValidateManager(username, password);
+                case "Admin":
+                    logged_user = username;
+                    ValidateUser(username, password);
+                    admin.Show();
+                    break;
+                case "Manager":
+                    CheckPasswordExpiry(username);
+                    ValidateUser(username, password);
+                    break;
+                case "Operator":
+                    CheckPasswordExpiry(username);
+                    ValidateUser(username, password);
+                    break;
+                case "Engineer":
+                    CheckPasswordExpiry(username);
+                    ValidateUser(username, password);
+                    break;
+                default:
+                    MessageBox.Show("Unknown Role");
+                    break;
+            }
            
-
-            }
-            else if (selectedRole == "Operator")
-            {
-                username = usernametxt.Text;
-                password = passwordtxt.Text;
-                CheckPasswordExpiry(username);
-                ValidateOperator(username, password);
-                login.Dispose();
-
-
-            }
-            else if (selectedRole == "Engineer")
-            {
-                username = usernametxt.Text;
-                password = passwordtxt.Text;
-                CheckPasswordExpiry(username);
-                ValidateEngineer(username, password);
-                login.Dispose();
-            }
-            else
-            {
-                MessageBox.Show("Unknown Role");
-            }
         }
-        private void ValidateAdmin(string user_name, string pass_word)
+        //private void ValidateAdmin(string user_name, string pass_word)
+        //{
+        //    bool passwordValidationResult = false;
+        //    bool userFound = false;
+
+        //    using (var con = new SqlConnection(_connectionString))
+        //    {
+        //        con.Open();
+        //        string query = "SELECT password FROM Users WHERE username = @username AND roles = 'Admin';";
+
+        //        using (SqlCommand cmd = new SqlCommand(query, con))
+        //        {
+        //            cmd.Parameters.AddWithValue("@username", user_name);
+
+        //            using (SqlDataReader reader = cmd.ExecuteReader())
+        //            {
+        //                if (reader.HasRows)
+        //                {
+        //                    userFound = true;
+        //                    reader.Read();
+        //                    hashedPasswordFromDB = reader["password"].ToString();
+        //                    passwordValidationResult = ValidatePassword(pass_word, hashedPasswordFromDB);
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    if (!userFound)
+        //    {
+        //        MessageBox.Show("Incorrect username.");
+        //        return;
+        //    }
+
+        //    //if (passwordValidationResult)
+        //    //{
+        //    //    MessageBox.Show("Login successful for Admin!");
+        //    //    username_admin = user_name;
+        //    //    this.Hide();
+        //    //    admin.Show();
+        //    //}
+        //    //else
+        //    //{
+        //    //    MessageBox.Show("Incorrect password.");
+        //    //}
+        //}
+
+        //private void ValidateManager(string user_name, string pass_word)
+        //{
+        //    bool passwordValidationResult = false;
+        //    using (var con = new SqlConnection(_connectionString))
+        //    {
+        //        con.Open();
+        //        string query = "Select password from Users where username= @username AND roles='Manager';";
+
+        //        using (SqlCommand cmd = new SqlCommand(query, con))
+        //        {
+        //            cmd.Parameters.AddWithValue("@username", user_name);
+
+        //            using (SqlDataReader reader = cmd.ExecuteReader())
+        //            {
+        //                if (reader.HasRows)
+        //                {
+        //                    reader.Read();
+        //                    hashedPasswordFromDB = reader["password"].ToString();
+
+        //                    passwordValidationResult = ValidatePassword(pass_word, hashedPasswordFromDB);
+
+        //                    if (!passwordValidationResult)
+        //                    {
+        //                        failedLoginAttempts++;
+
+        //                        if (failedLoginAttempts >= 3)
+        //                        {
+        //                            passwordtxt.Enabled = false;
+        //                            //change_status(user_name, "Manager");
+        //                        }
+        //                        else
+        //                        {
+        //                            totalLoginAttempts--;
+        //                            MessageBox.Show("Invalid password. Attempts left #" + totalLoginAttempts);
+        //                        }
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("Invalid username");
+        //                }
+        //            }
+        //        }
+        //        con.Close();
+        //    }
+
+        //    if (passwordValidationResult)
+        //    {
+        //        using (var con = new SqlConnection(_connectionString))
+        //        {
+        //            con.Open();
+        //            string query = "Select username from Users where username= @username AND roles='Manager';";
+
+        //            using (SqlCommand cmd = new SqlCommand(query, con))
+        //            {
+        //                cmd.Parameters.AddWithValue("@username", user_name);
+
+        //                using (SqlDataReader reader = cmd.ExecuteReader())
+        //                {
+        //                    reader.Read();
+
+        //                    if (reader.HasRows)
+        //                    {
+        //                        if (usernametxt.Text == user_name)
+        //                        {
+        //                            MessageBox.Show("Login successful for Manager!");
+        //                            this.Hide();
+        //                            //logic to show manager his dashboard
+        //                        }
+        //                        else
+        //                        {
+        //                            MessageBox.Show("Invalid username");
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            con.Close();
+        //        }
+        //    }
+        //}
+        //private void ValidateOperator(string user_name, string pass_word)
+        //{
+        //    bool passwordValidationResult = false;
+        //    using (var con = new SqlConnection(_connectionString))
+        //    {
+        //        con.Open();
+        //        string query = "Select password from Users where username= @username AND roles='Operator';";
+
+        //        using (SqlCommand cmd = new SqlCommand(query, con))
+        //        {
+        //            cmd.Parameters.AddWithValue("@username", user_name);
+
+        //            using (SqlDataReader reader = cmd.ExecuteReader())
+        //            {
+        //                if (reader.HasRows)
+        //                {
+        //                    reader.Read();
+        //                    hashedPasswordFromDB = reader["password"].ToString();
+
+        //                    passwordValidationResult = ValidatePassword(pass_word, hashedPasswordFromDB);
+
+        //                    if (!passwordValidationResult)
+        //                    {
+        //                        failedLoginAttempts++;
+
+        //                        if (failedLoginAttempts >= 3)
+        //                        {
+        //                            passwordtxt.Enabled = false;
+        //                            //change_status(user_name, "Operator");
+        //                        }
+        //                        else
+        //                        {
+        //                            totalLoginAttempts--;
+        //                            MessageBox.Show("Invalid password. Attempts left #" + totalLoginAttempts);
+        //                        }
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("Invalid username");
+        //                }
+        //            }
+        //        }
+        //        con.Close();
+        //    }
+
+        //    if (passwordValidationResult)
+        //    {
+        //        using (var con = new SqlConnection(_connectionString))
+        //        {
+        //            con.Open();
+        //            string query = "Select username from Users where username= @username AND roles='Operator';";
+
+        //            using (SqlCommand cmd = new SqlCommand(query, con))
+        //            {
+        //                cmd.Parameters.AddWithValue("@username", user_name);
+
+        //                using (SqlDataReader reader = cmd.ExecuteReader())
+        //                {
+        //                    reader.Read();
+
+        //                    if (reader.HasRows)
+        //                    {
+        //                        if (usernametxt.Text == user_name)
+        //                        {
+        //                            MessageBox.Show("Login successful for Operator!");
+        //                            this.Hide();
+        //                            //logic to implement operator's dashboard
+        //                        }
+        //                        else
+        //                        {
+        //                            MessageBox.Show("Invalid username");
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            con.Close();
+        //        }
+        //    }
+        //}
+        private void ValidateUser(string user_name, string pass_word)
         {
             bool passwordValidationResult = false;
             bool userFound = false;
@@ -95,15 +308,13 @@ namespace AuthApp
             using (var con = new SqlConnection(_connectionString))
             {
                 con.Open();
-                string query = "SELECT password FROM Users WHERE username = @username AND roles = 'Admin';";
-
+                string query = "Select password from Users where username = @username";
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@username", user_name);
-
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        if (reader.HasRows)
+                        if(reader.HasRows)
                         {
                             userFound = true;
                             reader.Read();
@@ -112,283 +323,162 @@ namespace AuthApp
                         }
                     }
                 }
-            }
+                con.Close();
 
+            }
+            if (!passwordValidationResult)
+            {
+                failedLoginAttempts++;
+
+                if (failedLoginAttempts >= 3)
+                {
+                    passwordtxt.Enabled = false;
+                    //no dynamic behavior??
+                    change_status(user_name);
+                }
+                else
+                {
+                    totalLoginAttempts--;
+                    MessageBox.Show("Invalid password. Attempts left #" + totalLoginAttempts);
+                }
+            }
+            else
+            {
+                using (var con = new SqlConnection(_connectionString))
+                {
+                    con.Open();
+                    string query = "Select username from Users where username= @username";
+
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@username", user_name);
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            reader.Read();
+
+                            if (reader.HasRows)
+                            {
+                                if (usernametxt.Text == user_name)
+                                {
+                                    MessageBox.Show("Login successful");
+                                    this.Hide();
+
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Invalid username");
+                                }
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
             if (!userFound)
             {
                 MessageBox.Show("Incorrect username.");
                 return;
             }
+            
 
-            if (passwordValidationResult)
-            {
-                MessageBox.Show("Login successful for Admin!");
-                username_admin = user_name;
-                this.Hide();
-                admin.Show();
-            }
-            else
-            {
-                MessageBox.Show("Incorrect password.");
-            }
+
         }
+        //private void ValidateEngineer(string user_name, string pass_word)
+        //{
+        //    bool passwordValidationResult = false;
 
-        private void ValidateManager(string user_name, string pass_word)
-        {
-            bool passwordValidationResult = false;
-            using (var con = new SqlConnection(_connectionString))
-            {
-                con.Open();
-                string query = "Select password from Users where username= @username AND roles='Manager';";
+        //    using (var con = new SqlConnection(_connectionString))
+        //    {
+        //        con.Open();
+        //        string query = "Select password from Users where username= @username AND roles='Engineer';";
 
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    cmd.Parameters.AddWithValue("@username", user_name);
+        //        using (SqlCommand cmd = new SqlCommand(query, con))
+        //        {
+        //            cmd.Parameters.AddWithValue("@username", user_name);
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (reader.HasRows)
-                        {
-                            reader.Read();
-                            hashedPasswordFromDB = reader["password"].ToString();
+        //            using (SqlDataReader reader = cmd.ExecuteReader())
+        //            {
+        //                if (reader.HasRows)
+        //                {
+        //                    reader.Read();
+        //                    hashedPasswordFromDB = reader["password"].ToString();
 
-                            passwordValidationResult = ValidatePassword(pass_word, hashedPasswordFromDB);
+        //                    passwordValidationResult = ValidatePassword(pass_word, hashedPasswordFromDB);
 
-                            if (!passwordValidationResult)
-                            {
-                                failedLoginAttempts++;
+        //                    if (!passwordValidationResult)
+        //                    {
+        //                        failedLoginAttempts++;
 
-                                if (failedLoginAttempts >= 3)
-                                {
-                                    passwordtxt.Enabled = false;
-                                    change_status(user_name, "Manager");
-                                }
-                                else
-                                {
-                                    totalLoginAttempts--;
-                                    MessageBox.Show("Invalid password. Attempts left #" + totalLoginAttempts);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("Invalid username");
-                        }
-                    }
-                }
-                con.Close();
-            }
+        //                        if (failedLoginAttempts >= 3)
+        //                        {
+        //                            passwordtxt.Enabled = false;
+        //                            //change_status(user_name, "Engineer");
+        //                        }
+        //                        else
+        //                        {
+        //                            totalLoginAttempts--;
+        //                            MessageBox.Show("Invalid password. Attempts left #" + totalLoginAttempts);
+        //                        }
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("Invalid username");
+        //                }
+        //            }
+        //        }
+        //        con.Close();
+        //    }
 
-            if (passwordValidationResult)
-            {
-                using (var con = new SqlConnection(_connectionString))
-                {
-                    con.Open();
-                    string query = "Select username from Users where username= @username AND roles='Manager';";
+        //    if (passwordValidationResult)
+        //    {
+        //        using (var con = new SqlConnection(_connectionString))
+        //        {
+        //            con.Open();
+        //            string query = "Select username from Users where username= @username AND roles='Engineer';";
 
-                    using (SqlCommand cmd = new SqlCommand(query, con))
-                    {
-                        cmd.Parameters.AddWithValue("@username", user_name);
+        //            using (SqlCommand cmd = new SqlCommand(query, con))
+        //            {
+        //                cmd.Parameters.AddWithValue("@username", user_name);
 
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            reader.Read();
+        //                using (SqlDataReader reader = cmd.ExecuteReader())
+        //                {
+        //                    reader.Read();
 
-                            if (reader.HasRows)
-                            {
-                                if (usernametxt.Text == user_name)
-                                {
-                                    MessageBox.Show("Login successful for Manager!");
-                                    this.Hide();
-                                    //logic to show manager his dashboard
-                                }
-                                else
-                                {
-                                    MessageBox.Show("Invalid username");
-                                }
-                            }
-                        }
-                    }
-                    con.Close();
-                }
-            }
-        }
-        private void ValidateOperator(string user_name, string pass_word)
-        {
-            bool passwordValidationResult = false;
-            using (var con = new SqlConnection(_connectionString))
-            {
-                con.Open();
-                string query = "Select password from Users where username= @username AND roles='Operator';";
-
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    cmd.Parameters.AddWithValue("@username", user_name);
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (reader.HasRows)
-                        {
-                            reader.Read();
-                            hashedPasswordFromDB = reader["password"].ToString();
-
-                            passwordValidationResult = ValidatePassword(pass_word, hashedPasswordFromDB);
-
-                            if (!passwordValidationResult)
-                            {
-                                failedLoginAttempts++;
-
-                                if (failedLoginAttempts >= 3)
-                                {
-                                    passwordtxt.Enabled = false;
-                                    change_status(user_name, "Operator");
-                                }
-                                else
-                                {
-                                    totalLoginAttempts--;
-                                    MessageBox.Show("Invalid password. Attempts left #" + totalLoginAttempts);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("Invalid username");
-                        }
-                    }
-                }
-                con.Close();
-            }
-
-            if (passwordValidationResult)
-            {
-                using (var con = new SqlConnection(_connectionString))
-                {
-                    con.Open();
-                    string query = "Select username from Users where username= @username AND roles='Operator';";
-
-                    using (SqlCommand cmd = new SqlCommand(query, con))
-                    {
-                        cmd.Parameters.AddWithValue("@username", user_name);
-
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            reader.Read();
-
-                            if (reader.HasRows)
-                            {
-                                if (usernametxt.Text == user_name)
-                                {
-                                    MessageBox.Show("Login successful for Operator!");
-                                    this.Hide();
-                                    //logic to implement operator's dashboard
-                                }
-                                else
-                                {
-                                    MessageBox.Show("Invalid username");
-                                }
-                            }
-                        }
-                    }
-                    con.Close();
-                }
-            }
-        }
-        private void ValidateEngineer(string user_name, string pass_word)
-        {
-            bool passwordValidationResult = false;
-
-            using (var   con = new SqlConnection(_connectionString))
-            {
-                con.Open();
-                string query = "Select password from Users where username= @username AND roles='Engineer';";
-
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    cmd.Parameters.AddWithValue("@username", user_name);
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (reader.HasRows)
-                        {
-                            reader.Read();
-                            hashedPasswordFromDB = reader["password"].ToString();
-
-                            passwordValidationResult = ValidatePassword(pass_word, hashedPasswordFromDB);
-
-                            if (!passwordValidationResult)
-                            {
-                                failedLoginAttempts++;
-
-                                if (failedLoginAttempts >= 3)
-                                {
-                                    passwordtxt.Enabled = false;
-                                    change_status(user_name, "Engineer");
-                                }
-                                else
-                                {
-                                    totalLoginAttempts--;
-                                    MessageBox.Show("Invalid password. Attempts left #" + totalLoginAttempts);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("Invalid username");
-                        }
-                    }
-                }
-                con.Close();
-            }
-
-            if (passwordValidationResult)
-            {
-                using (var con = new SqlConnection(_connectionString))
-                {
-                    con.Open();
-                    string query = "Select username from Users where username= @username AND roles='Engineer';";
-
-                    using (SqlCommand cmd = new SqlCommand(query, con))
-                    {
-                        cmd.Parameters.AddWithValue("@username", user_name);
-
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            reader.Read();
-
-                            if (reader.HasRows)
-                            {
-                                if (usernametxt.Text == user_name)
-                                {
-                                    MessageBox.Show("Login successful for Engineer!");
-                                    this.Hide();
-                                    //logic to implement engineer's dashboard
-                                }
-                                else
-                                {
-                                    MessageBox.Show("Invalid username");
-                                }
-                            }
-                        }
-                    }
-                    con.Close();
-                }
-            }
-        }
+        //                    if (reader.HasRows)
+        //                    {
+        //                        if (usernametxt.Text == user_name)
+        //                        {
+        //                            MessageBox.Show("Login successful for Engineer!");
+        //                            this.Hide();
+        //                            //logic to implement engineer's dashboard
+        //                        }
+        //                        else
+        //                        {
+        //                            MessageBox.Show("Invalid username");
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            con.Close();
+        //        }
+        //    }
+        //}
 
 
-        private void change_status(string username, string roles)
+        private void change_status(string username)
         {
             try
             {
                 using (var con = new SqlConnection(_connectionString))
                 {
                     con.Open();
-                    string query = "UPDATE Users SET active_status = @active_status WHERE username = @username AND roles = @roles";
+                    string query = "UPDATE Users SET active_status = @active_status WHERE username = @username ";
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
                         cmd.Parameters.AddWithValue("@username", username);
                         cmd.Parameters.AddWithValue("@active_status", 0);
-                        cmd.Parameters.AddWithValue("@roles", roles);
                         int rowsaffected = cmd.ExecuteNonQuery();
                         if (rowsaffected > 0)
                         {
