@@ -49,8 +49,6 @@
             changestatus_lbl = new Label();
             validatebtn = new Button();
             label8 = new Label();
-            label7 = new Label();
-            changecombobox = new ComboBox();
             user_validationtxt = new TextBox();
             label6 = new Label();
             tabPage1 = new TabPage();
@@ -59,10 +57,8 @@
             resetpasstxt = new TextBox();
             Validate_btn = new Button();
             usernametxt = new TextBox();
-            reset_pass_cbx = new ComboBox();
             new_pass_lbl = new Label();
             label11 = new Label();
-            label10 = new Label();
             label9 = new Label();
             panel2 = new Panel();
             change_pass_btn = new Button();
@@ -85,9 +81,9 @@
             panel1.BackColor = SystemColors.ButtonShadow;
             panel1.Controls.Add(tabControl1);
             panel1.Controls.Add(panel2);
-            panel1.Location = new Point(-6, -2);
+            panel1.Location = new Point(-7, -2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1012, 724);
+            panel1.Size = new Size(1138, 724);
             panel1.TabIndex = 0;
             // 
             // tabControl1
@@ -95,10 +91,10 @@
             tabControl1.Controls.Add(createuser);
             tabControl1.Controls.Add(tabPage2);
             tabControl1.Controls.Add(tabPage1);
-            tabControl1.Location = new Point(306, 0);
+            tabControl1.Location = new Point(344, 0);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(706, 724);
+            tabControl1.Size = new Size(794, 724);
             tabControl1.TabIndex = 1;
             // 
             // createuser
@@ -116,7 +112,7 @@
             createuser.Location = new Point(4, 29);
             createuser.Name = "createuser";
             createuser.Padding = new Padding(3);
-            createuser.Size = new Size(698, 691);
+            createuser.Size = new Size(786, 691);
             createuser.TabIndex = 0;
             createuser.Text = "createuser";
             // 
@@ -124,7 +120,7 @@
             // 
             label12.AutoSize = true;
             label12.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label12.Location = new Point(146, 424);
+            label12.Location = new Point(164, 424);
             label12.Name = "label12";
             label12.Size = new Size(93, 28);
             label12.TabIndex = 8;
@@ -132,9 +128,9 @@
             // 
             // create_btn
             // 
-            create_btn.Location = new Point(326, 515);
+            create_btn.Location = new Point(367, 515);
             create_btn.Name = "create_btn";
-            create_btn.Size = new Size(94, 29);
+            create_btn.Size = new Size(106, 29);
             create_btn.TabIndex = 7;
             create_btn.Text = "Create User";
             create_btn.UseVisualStyleBackColor = true;
@@ -142,16 +138,16 @@
             // 
             // password_txt
             // 
-            password_txt.Location = new Point(273, 428);
+            password_txt.Location = new Point(307, 428);
             password_txt.Name = "password_txt";
-            password_txt.Size = new Size(193, 27);
+            password_txt.Size = new Size(217, 27);
             password_txt.TabIndex = 6;
             // 
             // username_txt
             // 
-            username_txt.Location = new Point(274, 350);
+            username_txt.Location = new Point(308, 350);
             username_txt.Name = "username_txt";
-            username_txt.Size = new Size(192, 27);
+            username_txt.Size = new Size(216, 27);
             username_txt.TabIndex = 5;
             username_txt.TextChanged += username_txt_TextChanged;
             // 
@@ -159,7 +155,7 @@
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 12F);
-            label5.Location = new Point(158, 425);
+            label5.Location = new Point(178, 425);
             label5.Name = "label5";
             label5.Size = new Size(0, 28);
             label5.TabIndex = 4;
@@ -168,7 +164,7 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 12F);
-            label4.Location = new Point(149, 346);
+            label4.Location = new Point(168, 346);
             label4.Name = "label4";
             label4.Size = new Size(99, 28);
             label4.TabIndex = 3;
@@ -178,7 +174,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(147, 217);
+            label3.Location = new Point(165, 217);
             label3.Name = "label3";
             label3.Size = new Size(112, 28);
             label3.TabIndex = 2;
@@ -187,16 +183,16 @@
             // usercombobox
             // 
             usercombobox.FormattingEnabled = true;
-            usercombobox.Location = new Point(265, 217);
+            usercombobox.Location = new Point(298, 217);
             usercombobox.Name = "usercombobox";
-            usercombobox.Size = new Size(201, 28);
+            usercombobox.Size = new Size(226, 28);
             usercombobox.TabIndex = 1;
             // 
             // label2
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(283, 90);
+            label2.Location = new Point(318, 90);
             label2.Name = "label2";
             label2.Size = new Size(137, 38);
             label2.TabIndex = 0;
@@ -208,7 +204,7 @@
             tabPage2.Location = new Point(4, 29);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(698, 691);
+            tabPage2.Size = new Size(786, 691);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "tabPage2";
             tabPage2.UseVisualStyleBackColor = true;
@@ -223,35 +219,33 @@
             panel3.Controls.Add(changestatus_lbl);
             panel3.Controls.Add(validatebtn);
             panel3.Controls.Add(label8);
-            panel3.Controls.Add(label7);
-            panel3.Controls.Add(changecombobox);
             panel3.Controls.Add(user_validationtxt);
             panel3.Controls.Add(label6);
             panel3.Location = new Point(1, 1);
             panel3.Name = "panel3";
-            panel3.Size = new Size(698, 694);
+            panel3.Size = new Size(785, 694);
             panel3.TabIndex = 0;
             // 
             // statuscombobox
             // 
             statuscombobox.FormattingEnabled = true;
-            statuscombobox.Location = new Point(285, 506);
+            statuscombobox.Location = new Point(332, 449);
             statuscombobox.Name = "statuscombobox";
-            statuscombobox.Size = new Size(217, 28);
+            statuscombobox.Size = new Size(244, 28);
             statuscombobox.TabIndex = 11;
             // 
             // current_status_txt
             // 
-            current_status_txt.Location = new Point(285, 436);
+            current_status_txt.Location = new Point(332, 379);
             current_status_txt.Name = "current_status_txt";
-            current_status_txt.Size = new Size(217, 27);
+            current_status_txt.Size = new Size(244, 27);
             current_status_txt.TabIndex = 10;
             // 
             // current_status_lbl
             // 
             current_status_lbl.AutoSize = true;
             current_status_lbl.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            current_status_lbl.Location = new Point(128, 432);
+            current_status_lbl.Location = new Point(155, 375);
             current_status_lbl.Name = "current_status_lbl";
             current_status_lbl.Size = new Size(135, 28);
             current_status_lbl.TabIndex = 9;
@@ -259,9 +253,9 @@
             // 
             // changestatus_btn
             // 
-            changestatus_btn.Location = new Point(315, 562);
+            changestatus_btn.Location = new Point(366, 505);
             changestatus_btn.Name = "changestatus_btn";
-            changestatus_btn.Size = new Size(94, 29);
+            changestatus_btn.Size = new Size(106, 29);
             changestatus_btn.TabIndex = 8;
             changestatus_btn.Text = "Ok";
             changestatus_btn.UseVisualStyleBackColor = true;
@@ -271,7 +265,7 @@
             // 
             changestatus_lbl.AutoSize = true;
             changestatus_lbl.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            changestatus_lbl.Location = new Point(128, 491);
+            changestatus_lbl.Location = new Point(155, 434);
             changestatus_lbl.Name = "changestatus_lbl";
             changestatus_lbl.Size = new Size(136, 28);
             changestatus_lbl.TabIndex = 6;
@@ -279,9 +273,9 @@
             // 
             // validatebtn
             // 
-            validatebtn.Location = new Point(315, 322);
+            validatebtn.Location = new Point(366, 259);
             validatebtn.Name = "validatebtn";
-            validatebtn.Size = new Size(139, 31);
+            validatebtn.Size = new Size(156, 31);
             validatebtn.TabIndex = 5;
             validatebtn.Text = "Validate";
             validatebtn.UseVisualStyleBackColor = true;
@@ -291,42 +285,24 @@
             // 
             label8.AutoSize = true;
             label8.Font = new Font("Segoe UI", 12F);
-            label8.Location = new Point(137, 255);
+            label8.Location = new Point(186, 200);
             label8.Name = "label8";
             label8.Size = new Size(99, 28);
             label8.TabIndex = 4;
             label8.Text = "Username";
             // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Font = new Font("Segoe UI", 12F);
-            label7.Location = new Point(157, 190);
-            label7.Name = "label7";
-            label7.Size = new Size(107, 28);
-            label7.TabIndex = 3;
-            label7.Text = "Select Role";
-            // 
-            // changecombobox
-            // 
-            changecombobox.FormattingEnabled = true;
-            changecombobox.Location = new Point(285, 187);
-            changecombobox.Name = "changecombobox";
-            changecombobox.Size = new Size(217, 28);
-            changecombobox.TabIndex = 2;
-            // 
             // user_validationtxt
             // 
-            user_validationtxt.Location = new Point(285, 255);
+            user_validationtxt.Location = new Point(321, 201);
             user_validationtxt.Name = "user_validationtxt";
-            user_validationtxt.Size = new Size(217, 27);
+            user_validationtxt.Size = new Size(244, 27);
             user_validationtxt.TabIndex = 1;
             // 
             // label6
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label6.Location = new Point(232, 94);
+            label6.Location = new Point(261, 94);
             label6.Name = "label6";
             label6.Size = new Size(270, 38);
             label6.TabIndex = 0;
@@ -338,7 +314,7 @@
             tabPage1.Location = new Point(4, 29);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(698, 691);
+            tabPage1.Size = new Size(786, 691);
             tabPage1.TabIndex = 2;
             tabPage1.Text = "tabPage1";
             tabPage1.UseVisualStyleBackColor = true;
@@ -350,23 +326,21 @@
             panel4.Controls.Add(resetpasstxt);
             panel4.Controls.Add(Validate_btn);
             panel4.Controls.Add(usernametxt);
-            panel4.Controls.Add(reset_pass_cbx);
             panel4.Controls.Add(new_pass_lbl);
             panel4.Controls.Add(label11);
-            panel4.Controls.Add(label10);
             panel4.Controls.Add(label9);
             panel4.ForeColor = SystemColors.ButtonHighlight;
             panel4.Location = new Point(-4, -26);
             panel4.Name = "panel4";
-            panel4.Size = new Size(706, 718);
+            panel4.Size = new Size(794, 718);
             panel4.TabIndex = 0;
             // 
             // reset_btn
             // 
             reset_btn.ForeColor = SystemColors.ActiveCaptionText;
-            reset_btn.Location = new Point(306, 503);
+            reset_btn.Location = new Point(344, 503);
             reset_btn.Name = "reset_btn";
-            reset_btn.Size = new Size(94, 29);
+            reset_btn.Size = new Size(106, 29);
             reset_btn.TabIndex = 7;
             reset_btn.Text = "Reset";
             reset_btn.UseVisualStyleBackColor = true;
@@ -374,17 +348,17 @@
             // 
             // resetpasstxt
             // 
-            resetpasstxt.Location = new Point(280, 428);
+            resetpasstxt.Location = new Point(315, 428);
             resetpasstxt.Name = "resetpasstxt";
-            resetpasstxt.Size = new Size(160, 27);
+            resetpasstxt.Size = new Size(180, 27);
             resetpasstxt.TabIndex = 6;
             // 
             // Validate_btn
             // 
             Validate_btn.ForeColor = SystemColors.ActiveCaptionText;
-            Validate_btn.Location = new Point(306, 348);
+            Validate_btn.Location = new Point(344, 348);
             Validate_btn.Name = "Validate_btn";
-            Validate_btn.Size = new Size(94, 29);
+            Validate_btn.Size = new Size(106, 29);
             Validate_btn.TabIndex = 5;
             Validate_btn.Text = "Validate";
             Validate_btn.UseVisualStyleBackColor = true;
@@ -392,55 +366,39 @@
             // 
             // usernametxt
             // 
-            usernametxt.Location = new Point(286, 276);
+            usernametxt.Location = new Point(322, 276);
             usernametxt.Name = "usernametxt";
-            usernametxt.Size = new Size(172, 27);
+            usernametxt.Size = new Size(193, 27);
             usernametxt.TabIndex = 4;
-            // 
-            // reset_pass_cbx
-            // 
-            reset_pass_cbx.FormattingEnabled = true;
-            reset_pass_cbx.Location = new Point(280, 187);
-            reset_pass_cbx.Name = "reset_pass_cbx";
-            reset_pass_cbx.Size = new Size(178, 28);
-            reset_pass_cbx.TabIndex = 1;
             // 
             // new_pass_lbl
             // 
             new_pass_lbl.AutoSize = true;
+            new_pass_lbl.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             new_pass_lbl.ForeColor = SystemColors.ActiveCaptionText;
-            new_pass_lbl.Location = new Point(154, 428);
+            new_pass_lbl.Location = new Point(173, 428);
             new_pass_lbl.Name = "new_pass_lbl";
-            new_pass_lbl.Size = new Size(106, 20);
+            new_pass_lbl.Size = new Size(112, 20);
             new_pass_lbl.TabIndex = 3;
             new_pass_lbl.Text = "New password";
             // 
             // label11
             // 
             label11.AutoSize = true;
+            label11.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             label11.ForeColor = SystemColors.ActiveCaptionText;
-            label11.Location = new Point(154, 276);
+            label11.Location = new Point(173, 276);
             label11.Name = "label11";
-            label11.Size = new Size(113, 20);
+            label11.Size = new Size(121, 20);
             label11.TabIndex = 2;
             label11.Text = "Enter Username";
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.ForeColor = SystemColors.ActiveCaptionText;
-            label10.Location = new Point(161, 191);
-            label10.Name = "label10";
-            label10.Size = new Size(79, 20);
-            label10.TabIndex = 1;
-            label10.Text = "Select role";
             // 
             // label9
             // 
             label9.AutoSize = true;
             label9.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label9.ForeColor = SystemColors.ActiveCaptionText;
-            label9.Location = new Point(251, 91);
+            label9.Location = new Point(282, 91);
             label9.Name = "label9";
             label9.Size = new Size(207, 38);
             label9.TabIndex = 0;
@@ -456,14 +414,14 @@
             panel2.Controls.Add(label1);
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(308, 724);
+            panel2.Size = new Size(346, 724);
             panel2.TabIndex = 0;
             // 
             // change_pass_btn
             // 
-            change_pass_btn.Location = new Point(64, 289);
+            change_pass_btn.Location = new Point(72, 289);
             change_pass_btn.Name = "change_pass_btn";
-            change_pass_btn.Size = new Size(118, 55);
+            change_pass_btn.Size = new Size(133, 55);
             change_pass_btn.TabIndex = 4;
             change_pass_btn.Text = "Change password";
             change_pass_btn.UseVisualStyleBackColor = true;
@@ -471,9 +429,9 @@
             // 
             // button1
             // 
-            button1.Location = new Point(64, 217);
+            button1.Location = new Point(72, 217);
             button1.Name = "button1";
-            button1.Size = new Size(124, 40);
+            button1.Size = new Size(140, 40);
             button1.TabIndex = 3;
             button1.Text = "Change Status";
             button1.UseVisualStyleBackColor = true;
@@ -481,9 +439,9 @@
             // 
             // createuser_btn
             // 
-            createuser_btn.Location = new Point(64, 148);
+            createuser_btn.Location = new Point(72, 148);
             createuser_btn.Name = "createuser_btn";
-            createuser_btn.Size = new Size(124, 41);
+            createuser_btn.Size = new Size(140, 41);
             createuser_btn.TabIndex = 2;
             createuser_btn.Text = "Create User";
             createuser_btn.UseVisualStyleBackColor = true;
@@ -491,9 +449,9 @@
             // 
             // logout_btn
             // 
-            logout_btn.Location = new Point(80, 646);
+            logout_btn.Location = new Point(90, 646);
             logout_btn.Name = "logout_btn";
-            logout_btn.Size = new Size(108, 44);
+            logout_btn.Size = new Size(122, 44);
             logout_btn.TabIndex = 1;
             logout_btn.Text = "Logout";
             logout_btn.UseVisualStyleBackColor = true;
@@ -503,7 +461,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Elephant", 16.1999989F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(53, 44);
+            label1.Location = new Point(60, 44);
             label1.Name = "label1";
             label1.Size = new Size(175, 35);
             label1.TabIndex = 0;
@@ -511,10 +469,11 @@
             // 
             // AdminDashboard
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1006, 721);
+            ClientSize = new Size(1132, 721);
             Controls.Add(panel1);
+            Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             Name = "AdminDashboard";
             Text = "AdminDashboard";
             panel1.ResumeLayout(false);
@@ -551,11 +510,9 @@
         private Label label3;
         private Button button1;
         private Panel panel3;
-        private ComboBox changecombobox;
         private TextBox user_validationtxt;
         private Label label6;
         private Label label8;
-        private Label label7;
         private Button validatebtn;
         private Label changestatus_lbl;
         private Button changestatus_btn;
@@ -566,10 +523,8 @@
         private TabPage tabPage1;
         private Panel panel4;
         private Label label9;
-        private ComboBox reset_pass_cbx;
         private Label new_pass_lbl;
         private Label label11;
-        private Label label10;
         private TextBox usernametxt;
         private Button Validate_btn;
         private TextBox resetpasstxt;

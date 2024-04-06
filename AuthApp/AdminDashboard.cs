@@ -1,13 +1,15 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System.Data;
+using System.Text.Json;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace AuthApp
-{
+{ 
     public partial class AdminDashboard : Form
     {
-        //Connection String
-        string connectionString = "Data Source=shahood-rehan;Initial Catalog=AuthenticationApp;Integrated Security=True;Trust Server Certificate=True";
+        private readonly string _connectionString;
+
 
         DateTime dateTime = DateTime.Now;
         PasswordHashing hashing = new PasswordHashing();
@@ -15,6 +17,16 @@ namespace AuthApp
         public AdminDashboard()
         {
             InitializeComponent();
+            //connectionstring
+            string json;
+            using (StreamReader reader = new StreamReader("AuthApp.json"))
+            {
+                json = reader.ReadToEnd();
+            }
+
+            var config = JsonSerializer.Deserialize<Config>(json);
+            _connectionString = config.ConnectionString;
+
 
             //Initialization of different components
             usercombobox.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -26,12 +38,6 @@ namespace AuthApp
             usercombobox.SelectedIndex = 0;
             usercombobox.Text = "Select your role";
 
-            List<string> users = new List<string>();
-            users.Insert(0, "Engineer");
-            users.Insert(1, "Manager");
-            users.Insert(2, "Operator");
-            changecombobox.DataSource = users;
-            changecombobox.SelectedIndex = 0;
 
             List<string> status = new List<string>();
             status.Insert(0, "Active");
@@ -39,11 +45,6 @@ namespace AuthApp
             statuscombobox.DataSource = status;
             statuscombobox.Text = "Select status";
 
-            List<string> password_role = new List<string>();
-            password_role.Insert(0, "Manager");
-            password_role.Insert(1, "Operator");
-            password_role.Insert(2, "Engineer");
-            reset_pass_cbx.DataSource = password_role;
 
 
             current_status_txt.Visible = false;
@@ -81,7 +82,7 @@ namespace AuthApp
                 return;
             }
 
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (var con = new SqlConnection(_connectionString))
             {
                 con.Open();
                 PasswordHashing hasher = new PasswordHashing();
@@ -114,7 +115,7 @@ namespace AuthApp
             }
 
             //logs
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
 
@@ -157,7 +158,7 @@ namespace AuthApp
         {
             List<string> previousPasswords = new List<string>();
 
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (var con = new SqlConnection(_connectionString))
             {
                 con.Open();
 
@@ -179,17 +180,17 @@ namespace AuthApp
         }
         private void validatebtn_Click(object sender, EventArgs e)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (var con = new SqlConnection(_connectionString))
             {
                 try
                 {
                     con.Open();
-                    string query = "SELECT * FROM Users WHERE username = @username AND roles = @roles";
+                    string query = "SELECT * FROM Users WHERE username = @username ";
 
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
                         cmd.Parameters.AddWithValue("@username", user_validationtxt.Text);
-                        cmd.Parameters.AddWithValue("@roles", changecombobox.SelectedValue);
+
 
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -234,12 +235,12 @@ namespace AuthApp
 
         private void changestatus_btn_Click(object sender, EventArgs e)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (var con = new SqlConnection(_connectionString))
             {
                 try
                 {
                     con.Open();
-                    string query = "UPDATE Users SET active_status = @activestatus WHERE username = @username AND roles = @roles";
+                    string query = "UPDATE Users SET active_status = @activestatus WHERE username = @username ";
 
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
@@ -257,7 +258,7 @@ namespace AuthApp
                         }
 
                         cmd.Parameters.AddWithValue("@username", user_validationtxt.Text);
-                        cmd.Parameters.AddWithValue("@roles", changecombobox.SelectedValue);
+                     
 
                         int rowsAffected = cmd.ExecuteNonQuery();
 
@@ -289,11 +290,11 @@ namespace AuthApp
             }
 
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(_connectionString))
             {
-                string[] old_values = { current_status_txt.Text, user_validationtxt.Text, changecombobox.SelectedValue.ToString() };
+                string[] old_values = { current_status_txt.Text, user_validationtxt.Text};
                 string oldvalues = string.Join(",", old_values);
-                string[] new_values = { statuscombobox.SelectedValue.ToString(), user_validationtxt.Text, changecombobox.SelectedValue.ToString() };
+                string[] new_values = { statuscombobox.SelectedValue.ToString(), user_validationtxt.Text };
                 string newvalues = string.Join(",", new_values);
                 connection.Open();
 
@@ -320,16 +321,16 @@ namespace AuthApp
 
         private void Validate_btn_Click(object sender, EventArgs e)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (var con = new SqlConnection(_connectionString))
             {
 
                 con.Open();
-                string query = "SELECT * FROM Users WHERE username = @username AND roles = @roles";
+                string query = "SELECT * FROM Users WHERE username = @username ";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@username", usernametxt.Text);
-                    cmd.Parameters.AddWithValue("@roles", reset_pass_cbx.SelectedValue);
+     
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -377,21 +378,20 @@ namespace AuthApp
                 return;
             }
 
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (var con = new SqlConnection(_connectionString))
             {
                 con.Open();
                 PasswordHashing hasher = new PasswordHashing();
                 string password = resetpasstxt.Text;
                 string hashedPassword = hasher.HashPassword(password);
 
-                string query = "UPDATE USERS SET password=@password, active_status=@active_status WHERE username=@username AND roles=@roles";
+                string query = "UPDATE USERS SET password=@password, active_status=@active_status WHERE username=@username ";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@username", usernametxt.Text);
                     cmd.Parameters.AddWithValue("@password", hashedPassword);
                     cmd.Parameters.AddWithValue("@active_status", 1);
-                    cmd.Parameters.AddWithValue("@roles", reset_pass_cbx.SelectedValue);
                     cmd.Parameters.AddWithValue("@created_at", dateTime);
                     cmd.Parameters.AddWithValue("@LastPasswordChangeDate", dateTime);
 
@@ -450,6 +450,10 @@ namespace AuthApp
         {
             password_txt.PasswordChar = '*';
         }
+
+        private void password_txt_TextChanged_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }
-    

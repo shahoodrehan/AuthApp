@@ -1,22 +1,32 @@
 using Microsoft.Data.SqlClient;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace AuthApp
 {
     public partial class Form1 : Form
     {
-        //connectionstring 
-        string connectionString = "Data Source=shahood-rehan;Initial Catalog=AuthenticationApp;Integrated Security=True;Trust Server Certificate=True";
+        
         string hashedPasswordFromDB;
         AdminDashboard admin = new AdminDashboard();
         private int failedLoginAttempts = 0;
         private int totalLoginAttempts = 3;
         public static string username_admin;
+        private readonly string _connectionString;
 
         public Form1()
         {
             InitializeComponent();
+            //connectionstring
+            string json;
+            using (StreamReader reader = new StreamReader("AuthApp.json"))
+            {
+                json = reader.ReadToEnd();
+            }
+
+            var config = JsonSerializer.Deserialize<Config>(json);
+            _connectionString = config.ConnectionString;
 
             rolecombobox.DropDownStyle = ComboBoxStyle.DropDownList;
             List<string> roles = new List<string>();
@@ -82,7 +92,7 @@ namespace AuthApp
             bool passwordValidationResult = false;
             bool userFound = false;
 
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (var con = new SqlConnection(_connectionString))
             {
                 con.Open();
                 string query = "SELECT password FROM Users WHERE username = @username AND roles = 'Admin';";
@@ -126,7 +136,7 @@ namespace AuthApp
         private void ValidateManager(string user_name, string pass_word)
         {
             bool passwordValidationResult = false;
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (var con = new SqlConnection(_connectionString))
             {
                 con.Open();
                 string query = "Select password from Users where username= @username AND roles='Manager';";
@@ -171,7 +181,7 @@ namespace AuthApp
 
             if (passwordValidationResult)
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (var con = new SqlConnection(_connectionString))
                 {
                     con.Open();
                     string query = "Select username from Users where username= @username AND roles='Manager';";
@@ -206,7 +216,7 @@ namespace AuthApp
         private void ValidateOperator(string user_name, string pass_word)
         {
             bool passwordValidationResult = false;
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (var con = new SqlConnection(_connectionString))
             {
                 con.Open();
                 string query = "Select password from Users where username= @username AND roles='Operator';";
@@ -251,7 +261,7 @@ namespace AuthApp
 
             if (passwordValidationResult)
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (var con = new SqlConnection(_connectionString))
                 {
                     con.Open();
                     string query = "Select username from Users where username= @username AND roles='Operator';";
@@ -287,7 +297,7 @@ namespace AuthApp
         {
             bool passwordValidationResult = false;
 
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (var   con = new SqlConnection(_connectionString))
             {
                 con.Open();
                 string query = "Select password from Users where username= @username AND roles='Engineer';";
@@ -332,7 +342,7 @@ namespace AuthApp
 
             if (passwordValidationResult)
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (var con = new SqlConnection(_connectionString))
                 {
                     con.Open();
                     string query = "Select username from Users where username= @username AND roles='Engineer';";
@@ -370,7 +380,7 @@ namespace AuthApp
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (var con = new SqlConnection(_connectionString))
                 {
                     con.Open();
                     string query = "UPDATE Users SET active_status = @active_status WHERE username = @username AND roles = @roles";
@@ -408,7 +418,7 @@ namespace AuthApp
         }
         private void CheckPasswordExpiry(string username)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (var con = new SqlConnection(_connectionString))
             {
                 con.Open();
                 string query = "SELECT LastPasswordChangeDate FROM Users WHERE username = @username;";
